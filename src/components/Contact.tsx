@@ -1,4 +1,4 @@
-import { Github, Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Github, Mail, MapPin, Phone, Send, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Contact() {
@@ -8,6 +8,7 @@ export default function Contact() {
     message: ''
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [showMap, setShowMap] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +32,8 @@ export default function Contact() {
     {
       icon: MapPin,
       label: 'Location',
-      value: 'Odisha, India'
+      value: 'Odisha, India',
+      onClick: () => setShowMap(true)
     },
     {
       icon: Mail,
@@ -65,27 +67,31 @@ export default function Contact() {
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="space-y-8">
               <div>
-                <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
-                <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-white mb-6 text-center lg:text-left">Contact Information</h3>
+                <div className="grid grid-cols-2 gap-4">
                   {contactInfo.map((info) => (
                     <div
                       key={info.label}
-                      className="flex items-start space-x-4 p-4 bg-slate-900 border border-blue-500/30 rounded-lg hover:border-cyan-400 transition-all"
+                      className="flex flex-col items-center justify-center text-center space-y-2 p-4 bg-slate-950/50 border border-blue-500/30 rounded-lg hover:border-cyan-400 hover:bg-slate-950/70 transition-all cursor-pointer group min-h-[140px]"
+                      onClick={info.onClick}
                     >
-                      <info.icon className="w-6 h-6 text-cyan-400 flex-shrink-0 mt-1" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-gray-400 text-sm mb-1">{info.label}</p>
+                      <div className="p-2 bg-blue-500/10 rounded-full group-hover:bg-cyan-400/20 transition-colors">
+                        <info.icon className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">{info.label}</p>
                         {info.link ? (
                           <a
                             href={info.link}
                             target={info.link.startsWith('http') ? '_blank' : undefined}
                             rel={info.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                            className="text-white hover:text-cyan-400 transition-colors break-all"
+                            className="text-white text-sm font-semibold hover:text-cyan-400 transition-colors block break-words"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {info.value}
                           </a>
                         ) : (
-                          <p className="text-white">{info.value}</p>
+                          <p className="text-white text-sm font-semibold break-words">{info.value}</p>
                         )}
                       </div>
                     </div>
@@ -94,8 +100,8 @@ export default function Contact() {
               </div>
 
               <div className="bg-gradient-to-br from-blue-950 to-slate-900 border border-blue-500/30 rounded-lg p-6">
-                <h3 className="text-xl font-bold text-white mb-4">Let's Connect</h3>
-                <p className="text-gray-300 leading-relaxed">
+                <h3 className="text-xl font-bold text-white mb-4 text-center lg:text-left">Let's Connect</h3>
+                <p className="text-gray-300 leading-relaxed text-center lg:text-left">
                   Have a project in mind or want to discuss security solutions? Feel free to reach out.
                   I'm always open to discussing new opportunities and collaborations in the cybersecurity space.
                 </p>
@@ -117,7 +123,7 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors"
-                    placeholder="John Doe"
+                    placeholder="Your Name"
                   />
                 </div>
 
@@ -133,7 +139,7 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors"
-                    placeholder="john@example.com"
+                    placeholder="yourname@example.com"
                   />
                 </div>
 
@@ -172,6 +178,74 @@ export default function Contact() {
           </div>
         </div>
       </div>
+
+      {/* Map Modal */}
+      {showMap && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setShowMap(false)}
+        >
+          <div
+            className="relative bg-slate-900 border border-cyan-400/50 rounded-xl shadow-2xl max-w-4xl w-full overflow-hidden animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 border-b border-blue-500/30 bg-slate-950">
+              <div className="flex items-center space-x-3">
+                <MapPin className="w-6 h-6 text-cyan-400" />
+                <h3 className="text-xl font-bold text-white">Dhenkanal, Odisha, India</h3>
+              </div>
+              <button
+                onClick={() => setShowMap(false)}
+                className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-400 hover:text-white transition-colors" />
+              </button>
+            </div>
+            <div className="relative w-full h-[500px]">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d59733.78466846232!2d85.5586806536228!3d20.654865090440833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a18dffbd38b1513%3A0x4fe423769b5f1ee7!2sDhenkanal%2C%20Odisha!5e0!3m2!1sen!2sin!4v1744143270876!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scale-in {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+
+        .animate-scale-in {
+          animation: scale-in 0.3s ease-out;
+        }
+      `}</style>
     </section>
   );
 }
