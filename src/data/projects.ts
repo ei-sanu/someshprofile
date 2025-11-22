@@ -3,57 +3,132 @@ import { Project } from '../types/project';
 export const projects: Project[] = [
   {
     id: '1',
-    title: 'Secure Chat Application',
-    description: 'End-to-end encrypted chat application with advanced security features including perfect forward secrecy and secure key exchange protocols.',
-    imageUrl: 'https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&w=800',
-    techStack: ['Python', 'Flask', 'WebSockets', 'Cryptography', 'SQLite'],
-    githubUrl: 'https://github.com/ei-sanu',
-    category: 'Encryption utilities'
+    title: 'INFERNOVERSE 2025',
+    description: 'Infernoverse 2025 is a high-intensity hackathon designed to inspire innovation and real-world problem solving. As the CTO, I led the technical vision and engineering decisions behind the entire platform. I developed the complete event system—registration, dashboards, submission flow, and backend infrastructure. The platform powered a seamless, secure, and scalable experience for every participant.',
+    imageUrl: '/infernoverse.png',
+    techStack: ['Platform-Developer', 'CTO', 'Organizer'],
+    liveUrl: 'https://infernov.tech/',
+    category: 'Platform Development'
   },
   {
     id: '2',
-    title: 'Intrusion Detection System',
-    description: 'Real-time network intrusion detection system using machine learning algorithms to identify and alert on suspicious network activities.',
-    imageUrl: 'https://images.pexels.com/photos/8728382/pexels-photo-8728382.jpeg?auto=compress&cs=tinysrgb&w=800',
-    techStack: ['JavaScript', 'Node.js', 'TensorFlow.js', 'Express', 'MongoDB'],
+    title: 'Tech Forge',
+    description: 'I served as the Tech Head and Lead Developer for TechForge 2025, a prestigious national-level hackathon. I single-handedly developed the official event website: techforge2025.tech. My responsibilities included backend integration, frontend UI/UX, and deployment. TechForge 2025 successfully highlighted emerging technologies and developer talent nationwide.',
+    imageUrl: '/project2.png',
+    techStack: ['Front-End Developer', 'Tech Head', 'WEBSITE'],
     githubUrl: 'https://github.com/ei-sanu',
-    category: 'Net Works'
+    liveUrl: 'https://www.techforge2025.tech/',
+    category: 'Front-End Web Dev'
   },
+  
   {
     id: '3',
-    title: 'Vulnerability Scanner',
-    description: 'Automated vulnerability scanning tool that detects common security flaws in web applications and provides remediation recommendations.',
-    imageUrl: 'https://images.pexels.com/photos/2908984/pexels-photo-2908984.jpeg?auto=compress&cs=tinysrgb&w=800',
-    techStack: ['Go', 'Docker', 'PostgreSQL', 'gRPC'],
+    title: 'Track My Trek',
+    description: 'We aim to democratize career guidance by providing resources, roadmaps, and assessments across 30+ technology domains. With 150+ skill assessments and personalized recommendations, learners can track their progress effectively. The platform also offers 450+ practical project ideas to help users build strong portfolios with real-world, hands-on experience.',
+    imageUrl: '/trackmytrek.png',
+    techStack: ['Front-End Dev', 'Online learning Platform', 'Test Yourself', 'Real-time'],
     githubUrl: 'https://github.com/ei-sanu',
-    category: 'Secure coding templates'
-  },
-  {
-    id: '4',
-    title: 'Encryption Toolkit',
-    description: 'Comprehensive encryption and decryption toolkit supporting multiple algorithms including AES, RSA, and modern cryptographic standards.',
-    imageUrl: 'https://images.pexels.com/photos/1089438/pexels-photo-1089438.jpeg?auto=compress&cs=tinysrgb&w=800',
-    techStack: ['C++', 'OpenSSL', 'Qt', 'CMake'],
-    githubUrl: 'https://github.com/ei-sanu',
-    category: 'Encryption utilities'
-  },
-  {
-    id: '5',
-    title: 'Cybersecurity Dashboard',
-    description: 'Modern web dashboard for monitoring security metrics, threat intelligence, and system health across multiple endpoints.',
-    imageUrl: 'https://images.pexels.com/photos/577585/pexels-photo-577585.jpeg?auto=compress&cs=tinysrgb&w=800',
-    techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Chart.js', 'Vite'],
-    githubUrl: 'https://github.com/ei-sanu',
-    liveUrl: '#',
+    liveUrl: 'https://trackmytrek.vercel.app/',
     category: 'Front-End Web Dev'
   },
   {
+    id: '4',
+    title: 'WeatherCast',
+    description: 'A modern weather application built with React that provides real-time weather updates, forecasting, and integrated news feed. Features include interactive weather maps, severe weather alerts, customizable dashboard, and curated news related to climate and local events. The app uses advanced APIs for accurate weather data and news aggregation.',
+    imageUrl: '/project3.png',
+    techStack: ['React', 'Real Time', 'Weather', 'News'],
+    githubUrl: 'https://github.com/ei-sanu/caster',
+    liveUrl: 'https://urcaster.netlify.app/',
+    category: 'Front-End Web Dev'
+  },
+  {
+    id: '5',
+    title: 'NetAnalyser',
+    description: 'A sophisticated web application that conducts comprehensive internet speed analysis and provides personalized recommendations for various online activities. Features real-time speed metrics, latency testing, and AI-powered usage optimization suggestions for gaming, streaming, and productivity.',
+    imageUrl: '/netanalyser.png',
+    techStack: ['React', 'Vite', 'Net Analyser', 'AI Analytics'],
+    githubUrl: 'https://github.com/ei-sanu/netanalyser',
+    liveUrl: 'https://netanalyser.vercel.app',
+    category: 'Net Works'
+  },
+  {
     id: '6',
-    title: 'Password Strength Analyzer',
-    description: 'Advanced password strength analysis tool with entropy calculation, pattern detection, and security recommendations.',
-    imageUrl: 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=800',
-    techStack: ['Python', 'Django', 'Redis', 'Celery', 'React'],
+    title: 'VNLScanner',
+    description: 'VNL Scanner helps you identify security issues in websites with our advanced simulation technology. Protect your digital assets with comprehensive security analysis. The platform leverages custom-trained methodologies to detect vulnerabilities through sophisticated scanning techniques, designed specifically for educational purposes and web security research.',
+    imageUrl: '/project4.png',
+    techStack: ['React', 'TypeScript', 'Security', 'AI Analysis'],
     githubUrl: 'https://github.com/ei-sanu',
+    liveUrl: 'https://vnlscanner.vercel.app/',
+    category: 'Security'
+  },
+  {
+    id: '7',
+    title: 'CodeUnwanted',
+    description: 'CodeUnwanted provides state-of-the-art encoding and decoding tools for security professionals, developers, and cryptography enthusiasts. Our platform offers a comprehensive suite of tools designed with cybersecurity in mind. The application empowers users with advanced cryptographic capabilities while maintaining an intuitive interface for both beginners and experts.',
+    imageUrl: '/project5.png',
+    techStack: ['Cryptography', 'Security', 'Encoding', 'Decoding'],
+    githubUrl: 'https://github.com/ei-sanu',
+    liveUrl: 'https://codeunwanted.vercel.app/',
+    category: 'Encryption utilities'
+  },
+  {
+    id: '8',
+    title: 'AgeInsight',
+    description: 'AgeInsight is a comprehensive platform that goes beyond basic age calculation, offering personalized recommendations based on age groups. The application provides precise age calculations and tailored suggestions for different life stages, from early childhood development to adult documentation needs. Built with modern web technologies, it delivers an intuitive user experience with real-time calculations and smart recommendations.',
+    imageUrl: '/project6.png',
+    techStack: ['React', 'Age Analysis', 'Recommendations', 'Life Planning'],
+    githubUrl: 'https://github.com/ei-sanu',
+    liveUrl: 'https://ageinsight.vercel.app/',
+    category: 'Front-End Web Dev'
+  },
+  {
+    id: '9',
+    title: 'CyberURLScanner',
+    description: 'Detect Cyber Threats with our advanced cybersecurity scanner. Scan any URL for phishing, malware, and other online threats. Stay protected in the digital world with comprehensive threat detection and real-time protection.',
+    imageUrl: '/project7.png',
+    techStack: ['Cybersecurity', 'URL Scanner', 'Threat Detection', 'Real-time'],
+    githubUrl: 'https://github.com/ei-sanu',
+    liveUrl: 'https://cyberurlscanner.vercel.app/',
+    category: 'Security'
+  },
+  {
+    id: '10',
+    title: 'Biriyani Paradise',
+    description: 'Biriyani Paradise is dedicated to preserving and sharing the rich traditions of biriyani from across the Indian subcontinent. Founded in 2025, our platform provides detailed instructions, expert tips, and authentic recipes documented through extensive research across India. Each recipe is thoroughly tested and presented with clear step-by-step guidance and high-quality photography.',
+    imageUrl: '/project8.png',
+    techStack: ['Food', 'Recipes', 'Culture', 'Tradition'],
+    githubUrl: 'https://github.com/ei-sanu',
+    liveUrl: 'https://biriyaniparadise.vercel.app/',
+    category: 'Front-End Web Dev'
+  },
+  {
+    id: '11',
+    title: 'CyberCode Editor',
+    description: 'A cutting-edge code editor with cyberpunk aesthetics, offering real-time HTML, CSS, and JavaScript editing capabilities. Built for the modern web developer, it features instant preview updates, a secure sandboxed environment, and lightning-fast performance.',
+    imageUrl: '/project10.png',
+    techStack: ['Code Editor', 'Web Development', 'Cyberpunk', 'Real-time'],
+    githubUrl: 'https://github.com/ei-sanu',
+    liveUrl: 'https://cybercodeeditor.vercel.app/',
     category: 'Secure coding templates'
-  }
+  },
+  {
+    id: '12',
+    title: 'CyberPoster AW',
+    description: 'A professional platform for creating cybersecurity awareness posters. Features an intuitive drag-and-drop interface, security-themed icons, and high-quality export options. Perfect for organizations looking to enhance their security awareness programs.',
+    imageUrl: '/project11.png',
+    techStack: ['Security Awareness', 'Design Tool', 'Poster Creator', 'Educational'],
+    githubUrl: 'https://github.com/ei-sanu',
+    liveUrl: 'https://cyberposteraw.vercel.app/',
+    category: 'Security'
+  },
+  {
+    id: '13',
+    title: 'DHARMA',
+    description: 'Web Security Awareness provides interactive learning on common web vulnerabilities, including SQL Injection and Cross-Site Scripting (XSS). It offers hands-on examples and visualizations to demonstrate how these attacks work and their potential impacts.',
+    imageUrl: 'https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&w=800',
+    techStack: ['Security', 'Vulnerabilities', 'Awareness'],
+    githubUrl: 'https://github.com/ei-sanu/dharma',
+    liveUrl: 'https://dharma-five.vercel.app/',
+    category: 'Security'
+  },
 ];

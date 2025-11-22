@@ -67,7 +67,7 @@ export default function Services() {
               <p className="text-gray-500 text-sm mt-4">* Sign in required to access projects</p>
             </div>
 
-            <div className="mt-16 bg-slate-900/50 border border-blue-500/30 rounded-lg p-8">
+            {/* <div className="mt-16 bg-slate-900/50 border border-blue-500/30 rounded-lg p-8">
               <h3 className="text-2xl font-bold text-white mb-6 text-center">Project Access</h3>
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
@@ -119,7 +119,7 @@ export default function Services() {
                   </ul>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
