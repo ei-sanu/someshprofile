@@ -1,4 +1,4 @@
-import { Github, Mail, MapPin, Phone, Send, X } from 'lucide-react';
+import { AlertCircle, Github, Mail, MapPin, Phone, Send, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Contact() {
@@ -8,17 +8,58 @@ export default function Contact() {
     message: ''
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
   const [showMap, setShowMap] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
+    setErrorMessage('');
 
-    setTimeout(() => {
-      setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 3000);
-    }, 1000);
+    const formDataToSend = new FormData();
+    formDataToSend.append('access_key', '9c4dbdf0-8c38-47a5-aab1-9e3b06b196db');
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('message', formData.message);
+
+    // Custom subject line
+    formDataToSend.append('subject', '🚀 Portfolio Contact: New Message from ' + formData.name);
+
+    // Custom email template with better formatting
+    formDataToSend.append('from_name', 'Portfolio Contact Form');
+
+    // Add redirect (optional - where to redirect after form submission)
+    formDataToSend.append('redirect', window.location.origin + '/?success=true');
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formDataToSend
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        setStatus('error');
+        setErrorMessage(data.message || 'Failed to send message. Please try again.');
+        setTimeout(() => {
+          setStatus('idle');
+          setErrorMessage('');
+        }, 5000);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setStatus('error');
+      setErrorMessage('Network error. Please check your connection.');
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+      }, 5000);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -26,6 +67,11 @@ export default function Contact() {
       ...prev,
       [e.target.name]: e.target.value
     }));
+
+    // Clear error message when user starts typing
+    if (errorMessage) {
+      setErrorMessage('');
+    }
   };
 
   const contactInfo = [
@@ -122,7 +168,8 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors"
+                    disabled={status === 'sending'}
+                    className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Your Name"
                   />
                 </div>
@@ -138,7 +185,8 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors"
+                    disabled={status === 'sending'}
+                    className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="yourname@example.com"
                   />
                 </div>
@@ -154,7 +202,8 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 transition-colors resize-none"
+                    disabled={status === 'sending'}
+                    className="w-full px-4 py-3 bg-slate-950 border border-blue-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-colors resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Tell me about your project or inquiry..."
                   />
                 </div>
@@ -162,16 +211,44 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/50"
                 >
-                  <Send className="w-5 h-5" />
-                  <span>{status === 'sending' ? 'Sending...' : 'Send Message'}</span>
+                  {status === 'sending' ? (
+                    <>
+                      <div className="cyber-loader" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      <span>Send Message</span>
+                    </>
+                  )}
                 </button>
 
                 {status === 'success' && (
-                  <p className="text-green-400 text-center animate-fade-in">
-                    Message sent successfully! I'll get back to you soon.
-                  </p>
+                  <div className="animate-fade-in">
+                    <div className="flex items-center justify-center space-x-2 text-green-400">
+                      <div className="success-checkmark">
+                        <div className="check-icon">
+                          <span className="icon-line line-tip"></span>
+                          <span className="icon-line line-long"></span>
+                          <div className="icon-circle"></div>
+                          <div className="icon-fix"></div>
+                        </div>
+                      </div>
+                      <span className="font-semibold">Message sent successfully! I'll get back to you soon.</span>
+                    </div>
+                  </div>
+                )}
+
+                {status === 'error' && errorMessage && (
+                  <div className="animate-fade-in">
+                    <div className="flex items-center space-x-2 text-red-400">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                      <span className="font-semibold">{errorMessage}</span>
+                    </div>
+                  </div>
                 )}
               </form>
             </div>
@@ -218,6 +295,155 @@ export default function Contact() {
       )}
 
       <style>{`
+        /* Cyber Loader Animation */
+        .cyber-loader {
+          width: 20px;
+          height: 20px;
+          border: 3px solid transparent;
+          border-top-color: #22d3ee;
+          border-bottom-color: #3b82f6;
+          border-radius: 50%;
+          animation: cyber-spin 1s linear infinite;
+          position: relative;
+        }
+
+        .cyber-loader::before {
+          content: '';
+          position: absolute;
+          top: -3px;
+          left: -3px;
+          right: -3px;
+          bottom: -3px;
+          border: 3px solid transparent;
+          border-top-color: rgba(34, 211, 238, 0.3);
+          border-radius: 50%;
+          animation: cyber-spin 1.5s linear infinite reverse;
+        }
+
+        @keyframes cyber-spin {
+          0% {
+            transform: rotate(0deg);
+            box-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
+          }
+          50% {
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.8), 0 0 25px rgba(59, 130, 246, 0.5);
+          }
+          100% {
+            transform: rotate(360deg);
+            box-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
+          }
+        }
+
+        /* Success Checkmark Animation */
+        .success-checkmark {
+          width: 24px;
+          height: 24px;
+        }
+
+        .check-icon {
+          width: 24px;
+          height: 24px;
+          position: relative;
+          border-radius: 50%;
+          box-sizing: content-box;
+          border: 2px solid #22c55e;
+          animation: checkmark-scale 0.3s ease-in-out;
+        }
+
+        .icon-line {
+          height: 2px;
+          background-color: #22c55e;
+          display: block;
+          border-radius: 2px;
+          position: absolute;
+          z-index: 10;
+        }
+
+        .icon-line.line-tip {
+          top: 11px;
+          left: 5px;
+          width: 6px;
+          transform: rotate(45deg);
+          animation: icon-line-tip 0.3s 0.1s ease-in-out forwards;
+          opacity: 0;
+        }
+
+        .icon-line.line-long {
+          top: 9px;
+          right: 4px;
+          width: 12px;
+          transform: rotate(-45deg);
+          animation: icon-line-long 0.3s 0.2s ease-in-out forwards;
+          opacity: 0;
+        }
+
+        .icon-circle {
+          top: -2px;
+          left: -2px;
+          z-index: 10;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          position: absolute;
+          box-sizing: content-box;
+          border: 2px solid rgba(34, 197, 94, 0.3);
+          animation: checkmark-circle 0.6s ease-in-out;
+        }
+
+        .icon-fix {
+          top: 6px;
+          width: 3px;
+          left: 13px;
+          z-index: 1;
+          height: 7px;
+          position: absolute;
+          background-color: #0f172a;
+          transform: rotate(-45deg);
+        }
+
+        @keyframes checkmark-scale {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.1);
+          }
+        }
+
+        @keyframes checkmark-circle {
+          0% {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.2);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+          }
+        }
+
+        @keyframes icon-line-tip {
+          0% {
+            width: 0;
+            opacity: 0;
+          }
+          100% {
+            width: 6px;
+            opacity: 1;
+          }
+        }
+
+        @keyframes icon-line-long {
+          0% {
+            width: 0;
+            opacity: 0;
+          }
+          100% {
+            width: 12px;
+            opacity: 1;
+          }
+        }
+
         @keyframes fade-in {
           from {
             opacity: 0;

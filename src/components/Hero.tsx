@@ -1,4 +1,4 @@
-import { Lock, Shield, Terminal } from 'lucide-react';
+import { ArrowUp, Lock, Shield, Terminal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,6 +22,7 @@ export default function Hero() {
   const [sparks, setSparks] = useState<Spark[]>([]);
   const [imageTilt, setImageTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [badgeTilt, setBadgeTilt] = useState({ rotateX: 0, rotateY: 0 });
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const navigate = useNavigate();
   const fullText = 'blue-team-defender';
 
@@ -66,6 +67,27 @@ export default function Hero() {
     };
   }, []);
 
+  // Scroll to top button visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const handleIconHover = (iconKey: string, event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -103,7 +125,7 @@ export default function Hero() {
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateY = ((x - centerX) / centerX) * -10; // Reduced tilt for square
+    const rotateY = ((x - centerX) / centerX) * -10;
     const rotateX = ((y - centerY) / centerY) * 10;
 
     setImageTilt({ rotateX, rotateY });
@@ -140,322 +162,419 @@ export default function Hero() {
   ];
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900 custom-cursor">
-      {/* Animated Dark Overlay with Spotlight Effect */}
-      <div
-        className="spotlight-overlay"
-        style={{
-          background: `radial-gradient(circle 1000px at ${cursorPosition.x}px ${cursorPosition.y}px, transparent 0%, rgba(0, 0, 0, 0.30) 100%)`
-        }}
-      />
-
-      {/* Custom Cursor - Only Dot */}
-      <div
-        className="custom-cursor-dot"
-        style={{
-          left: `${cursorPosition.x}px`,
-          top: `${cursorPosition.y}px`
-        }}
-      />
-
-      {/* Colorful Crystal Sparks on Click */}
-      {sparks.map((spark) => (
+    <>
+      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900 custom-cursor">
+        {/* Animated Dark Overlay with Spotlight Effect */}
         <div
-          key={spark.id}
-          className="spark-effect"
+          className="spotlight-overlay"
           style={{
-            left: `${spark.x}px`,
-            top: `${spark.y}px`
+            background: `radial-gradient(circle 1000px at ${cursorPosition.x}px ${cursorPosition.y}px, transparent 0%, rgba(0, 0, 0, 0.30) 100%)`
           }}
-        >
-          <div className="spark-ring" />
-          <div className="spark-ring" style={{ animationDelay: '0.1s' }} />
-          <div className="spark-ring" style={{ animationDelay: '0.2s' }} />
-        </div>
-      ))}
+        />
 
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20" />
+        {/* Custom Cursor - Only Dot */}
+        <div
+          className="custom-cursor-dot"
+          style={{
+            left: `${cursorPosition.x}px`,
+            top: `${cursorPosition.y}px`
+          }}
+        />
 
-      <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        {/* Colorful Crystal Sparks on Click */}
+        {sparks.map((spark) => (
+          <div
+            key={spark.id}
+            className="spark-effect"
+            style={{
+              left: `${spark.x}px`,
+              top: `${spark.y}px`
+            }}
+          >
+            <div className="spark-ring" />
+            <div className="spark-ring" style={{ animationDelay: '0.1s' }} />
+            <div className="spark-ring" style={{ animationDelay: '0.2s' }} />
+          </div>
+        ))}
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:pt-20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSg1OSwgMTMwLCAyNDYsIDAuMSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20" />
 
-            {/* Right Side - Square Image and Name Sticker */}
-            <div className="relative flex justify-center items-center animate-slide-right order-1 lg:order-2 mb-8 lg:mb-0">
-              <div className="relative group" style={{ perspective: '1000px' }}>
-                {/* Animated background glow */}
-                <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-2xl group-hover:opacity-100 transition duration-1000 animate-pulse-slow"></div>
+        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
-                {/* Square Image container with tilt */}
-                <div
-                  className="relative transform hover:scale-105 transition-all duration-500"
-                  onMouseMove={handleImageMouseMove}
-                  onMouseLeave={handleImageMouseLeave}
-                  style={{
-                    transform: `perspective(1000px) rotateX(${imageTilt.rotateX}deg) rotateY(${imageTilt.rotateY}deg) scale(${imageTilt.rotateX !== 0 || imageTilt.rotateY !== 0 ? 1.05 : 1})`,
-                    transition: 'transform 0.3s ease-out',
-                    transformStyle: 'preserve-3d'
-                  }}
-                >
-                  <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] rounded-2xl overflow-hidden border-4 border-cyan-400 shadow-2xl shadow-cyan-500/50 sticker-effect">
-                    <img
-                      src="/sanuprofile.jpeg"
-                      alt="Somesh Ranjan Biswal"
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                    />
-                    {/* Overlay gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 via-transparent to-transparent"></div>
-                  </div>
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:pt-20">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
-                  {/* Name Sticker - Below square image */}
+              {/* Right Side - Square Image and Name Sticker */}
+              <div className="relative flex justify-center items-center animate-slide-right order-1 lg:order-2 mb-8 lg:mb-0">
+                <div className="relative group" style={{ perspective: '1000px' }}>
+                  {/* Animated background glow */}
+                  <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-2xl group-hover:opacity-100 transition duration-1000 animate-pulse-slow"></div>
+
+                  {/* Square Image container with tilt */}
                   <div
-                    className="absolute -bottom-4 sm:-bottom-6 left-1/2 transform -translate-x-1/2 w-full px-2 sm:px-4"
-                    onMouseMove={handleBadgeMouseMove}
-                    onMouseLeave={handleBadgeMouseLeave}
+                    className="relative transform hover:scale-105 transition-all duration-500"
+                    onMouseMove={handleImageMouseMove}
+                    onMouseLeave={handleImageMouseLeave}
                     style={{
-                      transform: `translate(-50%, 0) perspective(1000px) rotateX(${badgeTilt.rotateX}deg) rotateY(${badgeTilt.rotateY}deg)`,
+                      transform: `perspective(1000px) rotateX(${imageTilt.rotateX}deg) rotateY(${imageTilt.rotateY}deg) scale(${imageTilt.rotateX !== 0 || imageTilt.rotateY !== 0 ? 1.05 : 1})`,
                       transition: 'transform 0.3s ease-out',
                       transformStyle: 'preserve-3d'
                     }}
                   >
-                    <div className="bg-gradient-to-r from-cyan-500/30 via-blue-600/30 to-purple-600/30 p-0.5 sm:p-1 rounded-xl sm:rounded-2xl shadow-2xl shadow-blue-500/30 sticker-badge animate-bounce-slow backdrop-blur-xl">
-                      <div className="bg-slate-900/60 backdrop-blur-md px-3 py-1.5 sm:px-5 sm:py-2.5 lg:px-6 lg:py-3 rounded-xl border border-cyan-400/30">
-                        <h2 className="text-[10px] sm:text-base lg:text-lg xl:text-xl font-black text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 tracking-wide sm:tracking-wider uppercase animate-gradient leading-tight">
-                          CYBER SECURITY ENTHUSIAST
-                        </h2>
+                    <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] rounded-2xl overflow-hidden border-4 border-cyan-400 shadow-2xl shadow-cyan-500/50 sticker-effect">
+                      <img
+                        src="/sanuprofile.jpeg"
+                        alt="Somesh Ranjan Biswal"
+                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                      />
+                      {/* Overlay gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 via-transparent to-transparent"></div>
+                    </div>
+
+                    {/* Name Sticker - Below square image */}
+                    <div
+                      className="absolute -bottom-4 sm:-bottom-6 left-1/2 transform -translate-x-1/2 w-full px-2 sm:px-4"
+                      onMouseMove={handleBadgeMouseMove}
+                      onMouseLeave={handleBadgeMouseLeave}
+                      style={{
+                        transform: `translate(-50%, 0) perspective(1000px) rotateX(${badgeTilt.rotateX}deg) rotateY(${badgeTilt.rotateY}deg)`,
+                        transition: 'transform 0.3s ease-out',
+                        transformStyle: 'preserve-3d'
+                      }}
+                    >
+                      <div className="bg-gradient-to-r from-cyan-500/30 via-blue-600/30 to-purple-600/30 p-0.5 sm:p-1 rounded-xl sm:rounded-2xl shadow-2xl shadow-blue-500/30 sticker-badge animate-bounce-slow backdrop-blur-xl">
+                        <div className="bg-slate-900/60 backdrop-blur-md px-3 py-1.5 sm:px-5 sm:py-2.5 lg:px-6 lg:py-3 rounded-xl border border-cyan-400/30">
+                          <h2 className="text-[10px] sm:text-base lg:text-lg xl:text-xl font-black text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 tracking-wide sm:tracking-wider uppercase animate-gradient leading-tight">
+                            CYBER SECURITY ENTHUSIAST
+                          </h2>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Floating icons around image */}
+                    {/* Floating icons around image */}
+                    <div
+                      className="absolute -top-2 -left-2 sm:-top-4 sm:-left-4 w-8 h-8 sm:w-12 sm:h-12 bg-cyan-500/20 backdrop-blur-sm border border-cyan-400 rounded-lg flex items-center justify-center animate-float-slow cursor-pointer hover:bg-cyan-500/40 transition-all duration-300"
+                      onMouseMove={(e) => handleIconHover('icon1', e)}
+                      onMouseLeave={() => handleIconLeave('icon1')}
+                      style={{
+                        transform: `translate(${iconPositions.icon1.x}px, ${iconPositions.icon1.y}px)`,
+                        transition: 'transform 0.3s ease-out'
+                      }}
+                    >
+                      <Shield className="w-4 h-4 sm:w-6 sm:h-6 text-cyan-400" />
+                    </div>
+                    <div
+                      className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 w-8 h-8 sm:w-12 sm:h-12 bg-blue-500/20 backdrop-blur-sm border border-blue-400 rounded-lg flex items-center justify-center animate-float-slow cursor-pointer hover:bg-blue-500/40 transition-all duration-300"
+                      style={{
+                        animationDelay: '0.5s',
+                        transform: `translate(${iconPositions.icon2.x}px, ${iconPositions.icon2.y}px)`,
+                        transition: 'transform 0.3s ease-out'
+                      }}
+                      onMouseMove={(e) => handleIconHover('icon2', e)}
+                      onMouseLeave={() => handleIconLeave('icon2')}
+                    >
+                      <Lock className="w-4 h-4 sm:w-6 sm:h-6 text-blue-400" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Left Side - Text Content */}
+              <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-slide-left order-2 lg:order-1 text-center lg:text-left pointer-events-auto">
+                <div className="flex space-x-3 sm:space-x-4 mb-4 sm:mb-6 justify-center lg:justify-start pointer-events-auto">
                   <div
-                    className="absolute -top-2 -left-2 sm:-top-4 sm:-left-4 w-8 h-8 sm:w-12 sm:h-12 bg-cyan-500/20 backdrop-blur-sm border border-cyan-400 rounded-lg flex items-center justify-center animate-float-slow cursor-pointer hover:bg-cyan-500/40 transition-all duration-300"
-                    onMouseMove={(e) => handleIconHover('icon1', e)}
-                    onMouseLeave={() => handleIconLeave('icon1')}
+                    className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer pointer-events-auto"
+                    onMouseMove={(e) => handleIconHover('icon4', e)}
+                    onMouseLeave={() => handleIconLeave('icon4')}
                     style={{
-                      transform: `translate(${iconPositions.icon1.x}px, ${iconPositions.icon1.y}px)`,
+                      transform: `translate(${iconPositions.icon4.x}px, ${iconPositions.icon4.y}px)`,
                       transition: 'transform 0.3s ease-out'
                     }}
                   >
-                    <Shield className="w-4 h-4 sm:w-6 sm:h-6 text-cyan-400" />
+                    <Shield className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-cyan-400 animate-float pointer-events-none" />
                   </div>
                   <div
-                    className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 w-8 h-8 sm:w-12 sm:h-12 bg-blue-500/20 backdrop-blur-sm border border-blue-400 rounded-lg flex items-center justify-center animate-float-slow cursor-pointer hover:bg-blue-500/40 transition-all duration-300"
+                    className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer pointer-events-auto"
+                    onMouseMove={(e) => handleIconHover('icon5', e)}
+                    onMouseLeave={() => handleIconLeave('icon5')}
                     style={{
-                      animationDelay: '0.5s',
-                      transform: `translate(${iconPositions.icon2.x}px, ${iconPositions.icon2.y}px)`,
+                      transform: `translate(${iconPositions.icon5.x}px, ${iconPositions.icon5.y}px)`,
                       transition: 'transform 0.3s ease-out'
                     }}
-                    onMouseMove={(e) => handleIconHover('icon2', e)}
-                    onMouseLeave={() => handleIconLeave('icon2')}
                   >
-                    <Lock className="w-4 h-4 sm:w-6 sm:h-6 text-blue-400" />
+                    <Terminal className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-blue-400 animate-float pointer-events-none" style={{ animationDelay: '0.2s' }} />
+                  </div>
+                  <div
+                    className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer pointer-events-auto"
+                    onMouseMove={(e) => handleIconHover('icon6', e)}
+                    onMouseLeave={() => handleIconLeave('icon6')}
+                    style={{
+                      transform: `translate(${iconPositions.icon6.x}px, ${iconPositions.icon6.y}px)`,
+                      transition: 'transform 0.3s ease-out'
+                    }}
+                  >
+                    <Lock className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-cyan-400 animate-float pointer-events-none" style={{ animationDelay: '0.4s' }} />
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Left Side - Text Content */}
-            <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-slide-left order-2 lg:order-1 text-center lg:text-left pointer-events-auto">
-              <div className="flex space-x-3 sm:space-x-4 mb-4 sm:mb-6 justify-center lg:justify-start pointer-events-auto">
-                <div
-                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer pointer-events-auto"
-                  onMouseMove={(e) => handleIconHover('icon4', e)}
-                  onMouseLeave={() => handleIconLeave('icon4')}
-                  style={{
-                    transform: `translate(${iconPositions.icon4.x}px, ${iconPositions.icon4.y}px)`,
-                    transition: 'transform 0.3s ease-out'
-                  }}
-                >
-                  <Shield className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-cyan-400 animate-float pointer-events-none" />
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 sm:mb-6 tilted-text group cursor-pointer leading-tight pointer-events-auto">
+                  <span className="inline-block transition-all duration-300 hover:text-cyan-400 hover:scale-110 hover:rotate-2">SOMESH</span>{' '}
+                  <span className="inline-block transition-all duration-300 hover:text-blue-400 hover:scale-110 hover:-rotate-2">RANJAN</span>{' '}
+                  <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300 hover:scale-110 hover:rotate-3 hover:from-cyan-300 hover:to-blue-400">
+                    BISWAL
+                  </span>
+                </h1>
+
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-4 sm:mb-6 lg:mb-8 px-2 sm:px-0 pointer-events-auto tagline-text">
+                  Defending digital infrastructures, one threat at a time
+                </p>
+
+                <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8 lg:mb-12 justify-center lg:justify-start px-2 sm:px-0 pointer-events-auto">
+                  <span className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2 bg-blue-600/20 border border-blue-500/50 rounded-full text-cyan-400 text-xs sm:text-sm lg:text-base font-medium backdrop-blur-sm hover:bg-blue-600/40 hover:scale-105 transition-all duration-300 cursor-pointer">
+                    Blue Team
+                  </span>
+                  <span className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2 bg-blue-600/20 border border-blue-500/50 rounded-full text-cyan-400 text-xs sm:text-sm lg:text-base font-medium backdrop-blur-sm hover:bg-blue-600/40 hover:scale-105 transition-all duration-300 cursor-pointer">
+                    Security Analyst
+                  </span>
+                  <span className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2 bg-blue-600/20 border border-blue-500/50 rounded-full text-cyan-400 text-xs sm:text-sm lg:text-base font-medium backdrop-blur-sm hover:bg-blue-600/40 hover:scale-105 transition-all duration-300 cursor-pointer">
+                    Threat Hunter
+                  </span>
                 </div>
-                <div
-                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer pointer-events-auto"
-                  onMouseMove={(e) => handleIconHover('icon5', e)}
-                  onMouseLeave={() => handleIconLeave('icon5')}
-                  style={{
-                    transform: `translate(${iconPositions.icon5.x}px, ${iconPositions.icon5.y}px)`,
-                    transition: 'transform 0.3s ease-out'
-                  }}
-                >
-                  <Terminal className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-blue-400 animate-float pointer-events-none" style={{ animationDelay: '0.2s' }} />
-                </div>
-                <div
-                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer pointer-events-auto"
-                  onMouseMove={(e) => handleIconHover('icon6', e)}
-                  onMouseLeave={() => handleIconLeave('icon6')}
-                  style={{
-                    transform: `translate(${iconPositions.icon6.x}px, ${iconPositions.icon6.y}px)`,
-                    transition: 'transform 0.3s ease-out'
-                  }}
-                >
-                  <Lock className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-cyan-400 animate-float pointer-events-none" style={{ animationDelay: '0.4s' }} />
-                </div>
-              </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 sm:mb-6 tilted-text group cursor-pointer leading-tight pointer-events-auto">
-                <span className="inline-block transition-all duration-300 hover:text-cyan-400 hover:scale-110 hover:rotate-2">SOMESH</span>{' '}
-                <span className="inline-block transition-all duration-300 hover:text-blue-400 hover:scale-110 hover:-rotate-2">RANJAN</span>{' '}
-                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300 hover:scale-110 hover:rotate-3 hover:from-cyan-300 hover:to-blue-400">
-                  BISWAL
-                </span>
-              </h1>
-
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-4 sm:mb-6 lg:mb-8 px-2 sm:px-0 pointer-events-auto tagline-text">
-                Defending digital infrastructures, one threat at a time
-              </p>
-
-              <div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8 lg:mb-12 justify-center lg:justify-start px-2 sm:px-0 pointer-events-auto">
-                <span className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2 bg-blue-600/20 border border-blue-500/50 rounded-full text-cyan-400 text-xs sm:text-sm lg:text-base font-medium backdrop-blur-sm hover:bg-blue-600/40 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  Blue Team
-                </span>
-                <span className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2 bg-blue-600/20 border border-blue-500/50 rounded-full text-cyan-400 text-xs sm:text-sm lg:text-base font-medium backdrop-blur-sm hover:bg-blue-600/40 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  Security Analyst
-                </span>
-                <span className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2 bg-blue-600/20 border border-blue-500/50 rounded-full text-cyan-400 text-xs sm:text-sm lg:text-base font-medium backdrop-blur-sm hover:bg-blue-600/40 hover:scale-105 transition-all duration-300 cursor-pointer">
-                  Threat Hunter
-                </span>
-              </div>
-
-              <div className="bg-slate-900/80 backdrop-blur-sm border border-blue-500/30 rounded-lg p-4 sm:p-5 lg:p-6 max-w-2xl mx-auto lg:mx-0 text-left font-mono hover:border-cyan-400/50 transition-all duration-300 pointer-events-auto">
-                <div className="flex items-center space-x-2 mb-3 sm:mb-4">
-                  <div className="flex space-x-1 sm:space-x-1.5">
-                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500" />
-                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500" />
-                    <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500" />
+                <div className="bg-slate-900/80 backdrop-blur-sm border border-blue-500/30 rounded-lg p-4 sm:p-5 lg:p-6 max-w-2xl mx-auto lg:mx-0 text-left font-mono hover:border-cyan-400/50 transition-all duration-300 pointer-events-auto">
+                  <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                    <div className="flex space-x-1 sm:space-x-1.5">
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500" />
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500" />
+                      <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500" />
+                    </div>
+                    <span className="text-gray-400 text-xs sm:text-sm">sanu@kali:~</span>
                   </div>
-                  <span className="text-gray-400 text-xs sm:text-sm">sanu@kali:~</span>
+                  <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm lg:text-base">
+                    <div className="text-cyan-400">$ whoami</div>
+                    <div className="text-white">{terminalText}<span className="animate-pulse">_</span></div>
+                  </div>
                 </div>
-                <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm lg:text-base">
-                  <div className="text-cyan-400">$ whoami</div>
-                  <div className="text-white">{terminalText}<span className="animate-pulse">_</span></div>
+
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 px-2 sm:px-0 justify-center lg:justify-start pointer-events-auto">
+                  <button
+                    onClick={() => navigate('/projects')}
+                    className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg text-sm sm:text-base font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105 shadow-lg shadow-blue-500/50"
+                  >
+                    View Projects
+                  </button>
+                  <a
+                    href="#contact"
+                    className="px-6 py-3 sm:px-8 sm:py-4 bg-transparent border-2 border-cyan-400 text-cyan-400 rounded-lg text-sm sm:text-base font-semibold hover:bg-cyan-400 hover:text-slate-900 transition-all transform hover:scale-105"
+                  >
+                    Contact Me
+                  </a>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 px-2 sm:px-0 justify-center lg:justify-start pointer-events-auto">
-                <button
-                  onClick={() => navigate('/projects')}
-                  className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg text-sm sm:text-base font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105 shadow-lg shadow-blue-500/50"
-                >
-                  View Projects
-                </button>
-                <a
-                  href="#contact"
-                  className="px-6 py-3 sm:px-8 sm:py-4 bg-transparent border-2 border-cyan-400 text-cyan-400 rounded-lg text-sm sm:text-base font-semibold hover:bg-cyan-400 hover:text-slate-900 transition-all transform hover:scale-105"
-                >
-                  Contact Me
-                </a>
-              </div>
             </div>
-
           </div>
         </div>
-      </div>
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-        .tagline-text {
-          font-family: 'Space Grotesk', 'Orbitron', sans-serif;
-          font-weight: 500;
-          letter-spacing: 0.05em;
-          line-height: 1.6;
-        }
+          .tagline-text {
+            font-family: 'Space Grotesk', 'Orbitron', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            line-height: 1.6;
+          }
 
-        .spotlight-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 1;
-          transition: background 0.15s ease-out;
-        }
+          .spotlight-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            transition: background 0.15s ease-out;
+          }
 
-        .custom-cursor {
-          cursor: none;
-        }
+          .custom-cursor {
+            cursor: none;
+          }
 
-        .custom-cursor * {
-          cursor: none !important;
-        }
+          .custom-cursor * {
+            cursor: none !important;
+          }
 
-        .custom-cursor-dot {
-          position: fixed;
-          width: 20px;
-          height: 20px;
-          background: radial-gradient(circle, rgba(34, 211, 238, 0.8) 0%, rgba(59, 130, 246, 0.4) 50%, transparent 100%);
-          border-radius: 50%;
-          pointer-events: none;
-          transform: translate(-50%, -50%);
-          z-index: 9999;
-          transition: transform 0.1s ease;
-        }
+          .custom-cursor-dot {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.8) 0%, rgba(59, 130, 246, 0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: transform 0.1s ease;
+          }
 
-        .spark-effect {
-          position: fixed;
-          pointer-events: none;
-          z-index: 9998;
-          transform: translate(-50%, -50%);
-        }
+          .spark-effect {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+          }
 
-        .spark-ring {
-          position: absolute;
-          width: 0;
-          height: 0;
-          border: 2px solid rgba(34, 211, 238, 0.8);
-          border-radius: 50%;
-          animation: sparkExpand 1.2s ease-out forwards;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-        }
-
-        @keyframes sparkExpand {
-          0% {
+          .spark-ring {
+            position: absolute;
             width: 0;
             height: 0;
+            border: 2px solid rgba(34, 211, 238, 0.8);
+            border-radius: 50%;
+            animation: sparkExpand 1.2s ease-out forwards;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+          }
+
+          @keyframes sparkExpand {
+            0% {
+              width: 0;
+              height: 0;
+              opacity: 1;
+              border-width: 3px;
+            }
+            50% {
+              opacity: 0.6;
+              border-width: 2px;
+            }
+            100% {
+              width: 100px;
+              height: 100px;
+              opacity: 0;
+              border-width: 1px;
+            }
+          }
+
+          @keyframes float {
+            0%, 100% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-20px);
+            }
+          }
+
+          @keyframes glow {
+            0%, 100% {
+              box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+            }
+            50% {
+              box-shadow: 0 0 40px rgba(34, 211, 238, 0.8);
+            }
+          }
+
+          .icon-float {
+            transition: transform 0.3s ease-out;
+          }
+        `}</style>
+      </section>
+
+      {/* Scroll to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`scroll-to-top ${showScrollTop ? 'show' : ''}`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
+
+      <style>{`
+        .scroll-to-top {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          width: 56px;
+          height: 56px;
+          background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+          border: 2px solid rgba(34, 211, 238, 0.5);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 1000;
+          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(100px) scale(0.8);
+          box-shadow: 0 10px 30px rgba(34, 211, 238, 0.3);
+          color: white;
+          margin-right: 2px;
+        }
+
+        .scroll-to-top.show {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0) scale(1);
+        }
+
+        .scroll-to-top:hover {
+          transform: translateY(-5px) scale(1.1);
+          box-shadow: 0 15px 40px rgba(34, 211, 238, 0.5);
+          background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+          border-color: rgba(34, 211, 238, 0.8);
+        }
+
+        .scroll-to-top:active {
+          transform: translateY(-2px) scale(1.05);
+        }
+
+        /* Pulse animation */
+        .scroll-to-top::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          border-radius: 50%;
+          border: 2px solid rgba(34, 211, 238, 0.6);
+          animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+          0% {
+            transform: scale(1);
             opacity: 1;
-            border-width: 3px;
           }
           50% {
-            opacity: 0.6;
-            border-width: 2px;
+            transform: scale(1.15);
+            opacity: 0.5;
           }
           100% {
-            width: 100px;
-            height: 100px;
+            transform: scale(1.3);
             opacity: 0;
-            border-width: 1px;
           }
         }
 
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+          .scroll-to-top {
+            width: 48px;
+            height: 48px;
+            bottom: 20px;
+            right: 20px;
           }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
 
-        @keyframes glow {
-          0%, 100% {
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+          .scroll-to-top svg {
+            width: 20px;
+            height: 20px;
+            ;
           }
-          50% {
-            box-shadow: 0 0 40px rgba(34, 211, 238, 0.8);
-          }
-        }
-
-        .icon-float {
-          transition: transform 0.3s ease-out;
         }
       `}</style>
-    </section>
+    </>
   );
 }

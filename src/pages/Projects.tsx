@@ -56,11 +56,10 @@ export default function Projects() {
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`px-6 py-2 rounded-full font-medium transition-all transform hover:scale-105 ${
-                      selectedCategory === category
+                    className={`px-6 py-2 rounded-full font-medium transition-all transform hover:scale-105 ${selectedCategory === category
                         ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg'
                         : 'bg-slate-900 border border-blue-500/30 text-gray-300 hover:border-cyan-400'
-                    }`}
+                      }`}
                   >
                     {category}
                   </button>

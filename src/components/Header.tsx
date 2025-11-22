@@ -1,11 +1,16 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 import { Settings, X } from 'lucide-react';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   const scrollToSection = (sectionId: string) => {
     if (window.location.pathname !== '/') {
@@ -21,10 +26,15 @@ export default function Header() {
     setIsMenuOpen(false);
   };
 
+  const handleProjectsClick = () => {
+    navigate('/projects');
+    setIsMenuOpen(false);
+  };
+
   const navItems = [
     { label: 'Home', action: () => scrollToSection('home') },
     { label: 'About', action: () => scrollToSection('about') },
-    { label: 'Projects', action: () => navigate('/projects') },
+    { label: 'Projects', action: handleProjectsClick },
     { label: 'Services', action: () => scrollToSection('services') },
     { label: 'Contact', action: () => scrollToSection('contact') }
   ];
@@ -34,7 +44,7 @@ export default function Header() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo - Left Side */}
-          <Link to="/" className="flex items-center space-x-2 group">
+          <Link to="/" className="flex items-center space-x-2 group" onClick={() => setIsMenuOpen(false)}>
             <img
               src="/bgrmsanu.png"
               alt="Somesh Ranjan Biswal"
@@ -56,7 +66,7 @@ export default function Header() {
           </div>
 
           {/* Auth Buttons - Right Side */}
-          <div className="hidden md:flex items-center space-x-4 mr-16">
+          <div className="hidden md:flex items-center space-x-4 mr-8">
             <SignedOut>
               <SignInButton mode="modal">
                 <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all">
@@ -76,7 +86,7 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center space-x-4">
+          <div className="md:hidden flex items-center space-x-4 ">
             <SignedIn>
               <UserButton
                 appearance={{
