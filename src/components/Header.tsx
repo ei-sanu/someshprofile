@@ -39,6 +39,11 @@ export default function Header() {
     { label: 'Contact', action: () => scrollToSection('contact') }
   ];
 
+  // Determine redirect URL based on current page
+  const getRedirectUrl = () => {
+    return location.pathname === '/projects' ? '/projects' : '/';
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-lg border-b border-white/10">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,7 +73,7 @@ export default function Header() {
           {/* Auth Buttons - Right Side */}
           <div className="hidden md:flex items-center space-x-4 mr-8">
             <SignedOut>
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" redirectUrl={getRedirectUrl()}>
                 <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all">
                   Sign In
                 </button>
@@ -131,7 +136,7 @@ export default function Header() {
               </button>
             ))}
             <SignedOut>
-              <SignInButton mode="modal">
+              <SignInButton mode="modal" redirectUrl={getRedirectUrl()}>
                 <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all">
                   Sign In
                 </button>
