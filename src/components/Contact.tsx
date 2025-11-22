@@ -84,7 +84,7 @@ export default function Contact() {
     {
       icon: Mail,
       label: 'Email',
-      value: 'someshranjanbiswal13678@gmail.com',
+      value: 'Click to email',
       link: 'mailto:someshranjanbiswal13678@gmail.com'
     },
     {
