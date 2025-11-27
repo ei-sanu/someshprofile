@@ -12,6 +12,15 @@ export const projects: Project[] = [
   },
   {
     id: '2',
+    title: 'Fast Connect',
+    description: 'FastConnect is a lightweight automation tool designed to streamline the LPU Wi-Fi login process. It eliminates the repetitive task of manually entering credentials and accepting terms each time the network reconnects. The system auto-fills the user’s registration number and password, validates the form, accepts the terms, and performs an instant login — all within milliseconds.',
+    imageUrl: '/fastconnect.png',
+    techStack: ['Automated Tool', 'Automation', 'WEBSITE'],
+    liveUrl: 'https://fastconnect-blush.vercel.app/',
+    category: 'Auto Mation Tool'
+  },
+  {
+    id: '3',
     title: 'Tech Forge',
     description: 'I served as the Tech Head and Lead Developer for TechForge 2025, a prestigious national-level hackathon. I single-handedly developed the official event website: techforge2025.tech. My responsibilities included backend integration, frontend UI/UX, and deployment. TechForge 2025 successfully highlighted emerging technologies and developer talent nationwide.',
     imageUrl: '/project2.png',
@@ -20,9 +29,8 @@ export const projects: Project[] = [
     liveUrl: 'https://www.techforge2025.tech/',
     category: 'Front-End Web Dev'
   },
-  
   {
-    id: '3',
+    id: '4',
     title: 'Track My Trek',
     description: 'We aim to democratize career guidance by providing resources, roadmaps, and assessments across 30+ technology domains. With 150+ skill assessments and personalized recommendations, learners can track their progress effectively. The platform also offers 450+ practical project ideas to help users build strong portfolios with real-world, hands-on experience.',
     imageUrl: '/trackmytrek.png',
@@ -32,7 +40,7 @@ export const projects: Project[] = [
     category: 'Front-End Web Dev'
   },
   {
-    id: '4',
+    id: '5',
     title: 'WeatherCast',
     description: 'A modern weather application built with React that provides real-time weather updates, forecasting, and integrated news feed. Features include interactive weather maps, severe weather alerts, customizable dashboard, and curated news related to climate and local events. The app uses advanced APIs for accurate weather data and news aggregation.',
     imageUrl: '/project3.png',
@@ -42,7 +50,7 @@ export const projects: Project[] = [
     category: 'Front-End Web Dev'
   },
   {
-    id: '5',
+    id: '6',
     title: 'NetAnalyser',
     description: 'A sophisticated web application that conducts comprehensive internet speed analysis and provides personalized recommendations for various online activities. Features real-time speed metrics, latency testing, and AI-powered usage optimization suggestions for gaming, streaming, and productivity.',
     imageUrl: '/netanalyser.png',
@@ -52,7 +60,7 @@ export const projects: Project[] = [
     category: 'Net Works'
   },
   {
-    id: '6',
+    id: '7',
     title: 'VNLScanner',
     description: 'VNL Scanner helps you identify security issues in websites with our advanced simulation technology. Protect your digital assets with comprehensive security analysis. The platform leverages custom-trained methodologies to detect vulnerabilities through sophisticated scanning techniques, designed specifically for educational purposes and web security research.',
     imageUrl: '/project4.png',
@@ -62,7 +70,7 @@ export const projects: Project[] = [
     category: 'Security'
   },
   {
-    id: '7',
+    id: '8',
     title: 'CodeUnwanted',
     description: 'CodeUnwanted provides state-of-the-art encoding and decoding tools for security professionals, developers, and cryptography enthusiasts. Our platform offers a comprehensive suite of tools designed with cybersecurity in mind. The application empowers users with advanced cryptographic capabilities while maintaining an intuitive interface for both beginners and experts.',
     imageUrl: '/project5.png',
@@ -72,7 +80,7 @@ export const projects: Project[] = [
     category: 'Encryption utilities'
   },
   {
-    id: '8',
+    id: '9',
     title: 'AgeInsight',
     description: 'AgeInsight is a comprehensive platform that goes beyond basic age calculation, offering personalized recommendations based on age groups. The application provides precise age calculations and tailored suggestions for different life stages, from early childhood development to adult documentation needs. Built with modern web technologies, it delivers an intuitive user experience with real-time calculations and smart recommendations.',
     imageUrl: '/project6.png',
@@ -82,7 +90,7 @@ export const projects: Project[] = [
     category: 'Front-End Web Dev'
   },
   {
-    id: '9',
+    id: '10',
     title: 'CyberURLScanner',
     description: 'Detect Cyber Threats with our advanced cybersecurity scanner. Scan any URL for phishing, malware, and other online threats. Stay protected in the digital world with comprehensive threat detection and real-time protection.',
     imageUrl: '/project7.png',
@@ -92,7 +100,7 @@ export const projects: Project[] = [
     category: 'Security'
   },
   {
-    id: '10',
+    id: '11',
     title: 'Biriyani Paradise',
     description: 'Biriyani Paradise is dedicated to preserving and sharing the rich traditions of biriyani from across the Indian subcontinent. Founded in 2025, our platform provides detailed instructions, expert tips, and authentic recipes documented through extensive research across India. Each recipe is thoroughly tested and presented with clear step-by-step guidance and high-quality photography.',
     imageUrl: '/project8.png',
@@ -102,7 +110,7 @@ export const projects: Project[] = [
     category: 'Front-End Web Dev'
   },
   {
-    id: '11',
+    id: '12',
     title: 'CyberCode Editor',
     description: 'A cutting-edge code editor with cyberpunk aesthetics, offering real-time HTML, CSS, and JavaScript editing capabilities. Built for the modern web developer, it features instant preview updates, a secure sandboxed environment, and lightning-fast performance.',
     imageUrl: '/project10.png',
@@ -112,7 +120,7 @@ export const projects: Project[] = [
     category: 'Secure coding templates'
   },
   {
-    id: '12',
+    id: '13',
     title: 'CyberPoster AW',
     description: 'A professional platform for creating cybersecurity awareness posters. Features an intuitive drag-and-drop interface, security-themed icons, and high-quality export options. Perfect for organizations looking to enhance their security awareness programs.',
     imageUrl: '/project11.png',
@@ -122,7 +130,7 @@ export const projects: Project[] = [
     category: 'Security'
   },
   {
-    id: '13',
+    id: '14',
     title: 'DHARMA',
     description: 'Web Security Awareness provides interactive learning on common web vulnerabilities, including SQL Injection and Cross-Site Scripting (XSS). It offers hands-on examples and visualizations to demonstrate how these attacks work and their potential impacts.',
     imageUrl: 'https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&w=800',
