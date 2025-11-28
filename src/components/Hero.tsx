@@ -397,23 +397,40 @@ export default function Hero() {
                         </button>
                       </div>
                     ) : githubStats ? (
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
-                          <Users className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
-                          <div className="text-2xl font-bold text-white">{githubStats.followers}</div>
-                          <div className="text-xs text-gray-400 mt-1">Followers</div>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
+                            <Users className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
+                            <div className="text-2xl font-bold text-white">{githubStats.followers}</div>
+                            <div className="text-xs text-gray-400 mt-1">Followers</div>
+                          </div>
+
+                          <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
+                            <UserPlus className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                            <div className="text-2xl font-bold text-white">{githubStats.following}</div>
+                            <div className="text-xs text-gray-400 mt-1">Following</div>
+                          </div>
+
+                          <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
+                            <FolderGit2 className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                            <div className="text-2xl font-bold text-white">{githubStats.public_repos}</div>
+                            <div className="text-xs text-gray-400 mt-1">Repositories</div>
+                          </div>
                         </div>
 
-                        <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
-                          <UserPlus className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                          <div className="text-2xl font-bold text-white">{githubStats.following}</div>
-                          <div className="text-xs text-gray-400 mt-1">Following</div>
-                        </div>
-
-                        <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
-                          <FolderGit2 className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-                          <div className="text-2xl font-bold text-white">{githubStats.public_repos}</div>
-                          <div className="text-xs text-gray-400 mt-1">Repositories</div>
+                        {/* GitHub Profile Button */}
+                        <div className="pt-2">
+                          <a
+                            href="https://github.com/ei-sanu"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full bg-gradient-to-r from-gray-800/80 to-slate-800/80 hover:from-gray-700/80 hover:to-slate-700/80 border border-gray-600/50 hover:border-cyan-400/50 rounded-lg px-4 py-3 flex items-center justify-center space-x-2 transition-all duration-300 transform hover:scale-105 group"
+                          >
+                            <Github className="w-5 h-5 text-gray-300 group-hover:text-cyan-400 transition-colors duration-300" />
+                            <span className="text-gray-300 group-hover:text-cyan-400 font-medium text-sm transition-colors duration-300">
+                              View GitHub Profile
+                            </span>
+                          </a>
                         </div>
                       </div>
                     ) : (
