@@ -197,9 +197,12 @@ export default function Hero() {
         // Get it from: https://github.com/settings/tokens
         const headers: HeadersInit = {
           'Accept': 'application/vnd.github.v3+json',
-          // Uncomment and add your token to increase rate limit to 5000/hour
-          'Authorization': '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'
         };
+
+        // Only add Authorization if token exists
+        if (import.meta.env.VITE_GITHUB_TOKEN) {
+          headers['Authorization'] = `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`;
+        }
 
         const response = await fetch('https://api.github.com/users/ei-sanu', {
           headers,
