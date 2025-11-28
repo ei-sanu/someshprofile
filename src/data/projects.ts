@@ -65,7 +65,7 @@ export const projects: Project[] = [
     description: 'VNL Scanner helps you identify security issues in websites with our advanced simulation technology. Protect your digital assets with comprehensive security analysis. The platform leverages custom-trained methodologies to detect vulnerabilities through sophisticated scanning techniques, designed specifically for educational purposes and web security research.',
     imageUrl: '/project4.png',
     techStack: ['React', 'TypeScript', 'Security', 'AI Analysis'],
-    githubUrl: 'https://github.com/ei-sanu',
+    
     liveUrl: 'https://vnlscanner.vercel.app/',
     category: 'Security'
   },
@@ -75,7 +75,7 @@ export const projects: Project[] = [
     description: 'CodeUnwanted provides state-of-the-art encoding and decoding tools for security professionals, developers, and cryptography enthusiasts. Our platform offers a comprehensive suite of tools designed with cybersecurity in mind. The application empowers users with advanced cryptographic capabilities while maintaining an intuitive interface for both beginners and experts.',
     imageUrl: '/project5.png',
     techStack: ['Cryptography', 'Security', 'Encoding', 'Decoding'],
-    githubUrl: 'https://github.com/ei-sanu',
+
     liveUrl: 'https://codeunwanted.vercel.app/',
     category: 'Encryption utilities'
   },

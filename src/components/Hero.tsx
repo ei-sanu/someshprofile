@@ -1,4 +1,4 @@
-import { ArrowUp, Lock, Shield, Terminal } from 'lucide-react';
+import { ArrowUp, FolderGit2, Github, Lock, Shield, Terminal, UserPlus, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,8 +8,20 @@ interface Spark {
   y: number;
 }
 
+interface GitHubStats {
+  followers: number;
+  following: number;
+  public_repos: number;
+  name: string;
+  bio: string;
+  avatar_url: string;
+}
+
 export default function Hero() {
   const [terminalText, setTerminalText] = useState('');
+  const [githubStats, setGithubStats] = useState<GitHubStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [error, setError] = useState<string>('');
   const [iconPositions, setIconPositions] = useState({
     icon1: { x: 0, y: 0 },
     icon2: { x: 0, y: 0 },
@@ -161,6 +173,80 @@ export default function Hero() {
     { start: 'rgba(34, 211, 238, 1)', end: 'rgba(34, 211, 238, 0.3)', glow: 'rgba(34, 211, 238, 0.8)' },
   ];
 
+  // Fetch GitHub stats
+  useEffect(() => {
+    const fetchGitHubStats = async () => {
+      try {
+        // Check if we have cached data (valid for 5 minutes)
+        const cachedData = localStorage.getItem('githubStats');
+        const cachedTime = localStorage.getItem('githubStatsTime');
+
+        if (cachedData && cachedTime) {
+          const timeDiff = Date.now() - parseInt(cachedTime);
+          if (timeDiff < 5 * 60 * 1000) { // 5 minutes
+            console.log('Using cached GitHub data');
+            setGithubStats(JSON.parse(cachedData));
+            setLoadingStats(false);
+            return;
+          }
+        }
+
+        console.log('Fetching GitHub stats for: ei-sanu');
+
+        // Add your GitHub Personal Access Token here (optional but recommended)
+        // Get it from: https://github.com/settings/tokens
+        const headers: HeadersInit = {
+          'Accept': 'application/vnd.github.v3+json',
+          // Uncomment and add your token to increase rate limit to 5000/hour
+          'Authorization': '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'
+        };
+
+        const response = await fetch('https://api.github.com/users/ei-sanu', {
+          headers,
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Rate limit remaining:', response.headers.get('X-RateLimit-Remaining'));
+        console.log('Rate limit reset:', new Date(parseInt(response.headers.get('X-RateLimit-Reset') || '0') * 1000).toLocaleTimeString());
+
+        if (!response.ok) {
+          if (response.status === 403) {
+            throw new Error('Rate limit exceeded. Please wait or add a GitHub token.');
+          }
+          throw new Error(`GitHub API returned ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('GitHub data:', data);
+
+        // Cache the data
+        localStorage.setItem('githubStats', JSON.stringify(data));
+        localStorage.setItem('githubStatsTime', Date.now().toString());
+
+        setGithubStats(data);
+        setLoadingStats(false);
+        setError('');
+      } catch (error) {
+        console.error('Error fetching GitHub stats:', error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch stats');
+        setLoadingStats(false);
+
+        // Try to use cached data even if expired
+        const cachedData = localStorage.getItem('githubStats');
+        if (cachedData) {
+          console.log('Using expired cached data due to error');
+          setGithubStats(JSON.parse(cachedData));
+        }
+      }
+    };
+
+    fetchGitHubStats();
+
+    // Refresh stats every 10 minutes instead of 5
+    const interval = setInterval(fetchGitHubStats, 10 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900 custom-cursor">
@@ -206,13 +292,14 @@ export default function Hero() {
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
-              {/* Right Side - Square Image and Name Sticker */}
-              <div className="relative flex justify-center items-center animate-slide-right order-1 lg:order-2 mb-8 lg:mb-0">
+              {/* Right Side - GitHub Stats (Profile Image Commented Out) */}
+              <div className="relative flex flex-col justify-center items-center animate-slide-right order-1 lg:order-2 mb-8 lg:mb-0 space-y-8">
+
+                {/* PROFILE IMAGE SECTION - COMMENTED OUT FOR NOW */}
+                {/*
                 <div className="relative group" style={{ perspective: '1000px' }}>
-                  {/* Animated background glow */}
                   <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-2xl group-hover:opacity-100 transition duration-1000 animate-pulse-slow"></div>
 
-                  {/* Square Image container with tilt */}
                   <div
                     className="relative transform hover:scale-105 transition-all duration-500"
                     onMouseMove={handleImageMouseMove}
@@ -229,11 +316,9 @@ export default function Hero() {
                         alt="Somesh Ranjan Biswal"
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                       />
-                      {/* Overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 via-transparent to-transparent"></div>
                     </div>
 
-                    {/* Name Sticker - Below square image */}
                     <div
                       className="absolute -bottom-4 sm:-bottom-6 left-1/2 transform -translate-x-1/2 w-full px-2 sm:px-4"
                       onMouseMove={handleBadgeMouseMove}
@@ -253,7 +338,6 @@ export default function Hero() {
                       </div>
                     </div>
 
-                    {/* Floating icons around image */}
                     <div
                       className="absolute -top-2 -left-2 sm:-top-4 sm:-left-4 w-8 h-8 sm:w-12 sm:h-12 bg-cyan-500/20 backdrop-blur-sm border border-cyan-400 rounded-lg flex items-center justify-center animate-float-slow cursor-pointer hover:bg-cyan-500/40 transition-all duration-300"
                       onMouseMove={(e) => handleIconHover('icon1', e)}
@@ -276,6 +360,82 @@ export default function Hero() {
                       onMouseLeave={() => handleIconLeave('icon2')}
                     >
                       <Lock className="w-4 h-4 sm:w-6 sm:h-6 text-blue-400" />
+                    </div>
+                  </div>
+                </div>
+                */}
+
+                {/* GitHub Stats Section - Now in Right Column */}
+                <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl pointer-events-auto space-y-6">
+                  {/* GitHub Stats Card */}
+                  <div className="bg-slate-900/80 backdrop-blur-sm border border-blue-500/30 rounded-lg p-4 sm:p-5 lg:p-6 hover:border-cyan-400/50 transition-all duration-300">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Github className="w-6 h-6 text-cyan-400" />
+                      <h3 className="text-lg font-semibold text-white">GitHub Stats</h3>
+                    </div>
+
+                    {loadingStats ? (
+                      <div className="flex flex-col items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mb-2"></div>
+                        <p className="text-gray-400 text-sm">Loading stats...</p>
+                      </div>
+                    ) : error ? (
+                      <div className="text-center py-4">
+                        <p className="text-red-400 text-sm mb-2">⚠️ {error}</p>
+                        <button
+                          onClick={() => {
+                            setLoadingStats(true);
+                            setError('');
+                            window.location.reload();
+                          }}
+                          className="text-cyan-400 text-xs hover:text-cyan-300 underline"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    ) : githubStats ? (
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
+                          <Users className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
+                          <div className="text-2xl font-bold text-white">{githubStats.followers}</div>
+                          <div className="text-xs text-gray-400 mt-1">Followers</div>
+                        </div>
+
+                        <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
+                          <UserPlus className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+                          <div className="text-2xl font-bold text-white">{githubStats.following}</div>
+                          <div className="text-xs text-gray-400 mt-1">Following</div>
+                        </div>
+
+                        <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
+                          <FolderGit2 className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                          <div className="text-2xl font-bold text-white">{githubStats.public_repos}</div>
+                          <div className="text-xs text-gray-400 mt-1">Repositories</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center text-gray-400 text-sm mt-4">
+                        Unable to fetch GitHub stats. Please try again later.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Glowing Cyber Security Enthusiast Badge */}
+                  <div className="relative group">
+                    {/* Animated background glow */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-lg group-hover:opacity-100 transition duration-1000 animate-pulse-slow"></div>
+
+                    {/* Badge container */}
+                    <div className="relative bg-gradient-to-r from-cyan-500/30 via-blue-600/30 to-purple-600/30 p-1 rounded-xl shadow-2xl shadow-blue-500/30 backdrop-blur-xl">
+                      <div className="bg-slate-900/80 backdrop-blur-md px-6 py-4 rounded-lg border border-cyan-400/30">
+                        <div className="flex items-center justify-center space-x-3">
+                          <Shield className="w-6 h-6 text-cyan-400 animate-pulse" />
+                          <h2 className="text-base sm:text-lg lg:text-xl font-black text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 tracking-wider uppercase animate-gradient">
+                            CYBER SECURITY ENTHUSIAST
+                          </h2>
+                          <Lock className="w-6 h-6 text-purple-400 animate-pulse" style={{ animationDelay: '0.5s' }} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -386,6 +546,20 @@ export default function Hero() {
             font-weight: 500;
             letter-spacing: 0.05em;
             line-height: 1.6;
+          }
+
+          @keyframes animate-gradient {
+            0%, 100% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+          }
+
+          .animate-gradient {
+            background-size: 200% 200%;
+            animation: animate-gradient 3s ease infinite;
           }
 
           .spotlight-overlay {
