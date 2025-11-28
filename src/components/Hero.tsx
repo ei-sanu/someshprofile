@@ -222,7 +222,7 @@ export default function Hero() {
         const data = await response.json();
         console.log('GitHub data:', data);
 
-        // Cache the data
+        // Cache the dataaa
         localStorage.setItem('githubStats', JSON.stringify(data));
         localStorage.setItem('githubStatsTime', Date.now().toString());
 
