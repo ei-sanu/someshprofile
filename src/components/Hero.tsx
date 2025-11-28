@@ -261,7 +261,7 @@ export default function Hero() {
           }}
         />
 
-        {/* Custom Cursor - Only Dot */}
+        {/* Custom Cursor - Only Doot */}
         <div
           className="custom-cursor-dot"
           style={{
