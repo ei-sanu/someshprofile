@@ -1,4 +1,4 @@
-import { ArrowUp, FolderGit2, Github, Lock, Shield, Terminal, UserPlus, Users } from 'lucide-react';
+import { ArrowUp, Github, Lock, Shield, Terminal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -295,11 +295,10 @@ export default function Hero() {
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
-              {/* Right Side - GitHub Stats (Profile Image Commented Out) */}
+              {/* Right Side - Profile Image (Replaces GitHub Stats) */}
               <div className="relative flex flex-col justify-center items-center animate-slide-right order-1 lg:order-2 mb-8 lg:mb-0 space-y-8">
 
-                {/* PROFILE IMAGE SECTION - COMMENTED OUT FOR NOW */}
-                {/*
+                {/* Profile Image Section */}
                 <div className="relative group" style={{ perspective: '1000px' }}>
                   <div className="absolute -inset-2 sm:-inset-4 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-2xl group-hover:opacity-100 transition duration-1000 animate-pulse-slow"></div>
 
@@ -366,98 +365,20 @@ export default function Hero() {
                     </div>
                   </div>
                 </div>
-                */}
 
-                {/* GitHub Stats Section - Now in Right Column */}
-                <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl pointer-events-auto space-y-6">
-                  {/* GitHub Stats Card */}
-                  <div className="bg-slate-900/80 backdrop-blur-sm border border-blue-500/30 rounded-lg p-4 sm:p-5 lg:p-6 hover:border-cyan-400/50 transition-all duration-300">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Github className="w-6 h-6 text-cyan-400" />
-                      <h3 className="text-lg font-semibold text-white">GitHub Stats</h3>
-                    </div>
-
-                    {loadingStats ? (
-                      <div className="flex flex-col items-center justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mb-2"></div>
-                        <p className="text-gray-400 text-sm">Loading stats...</p>
-                      </div>
-                    ) : error ? (
-                      <div className="text-center py-4">
-                        <p className="text-red-400 text-sm mb-2">⚠️ {error}</p>
-                        <button
-                          onClick={() => {
-                            setLoadingStats(true);
-                            setError('');
-                            window.location.reload();
-                          }}
-                          className="text-cyan-400 text-xs hover:text-cyan-300 underline"
-                        >
-                          Retry
-                        </button>
-                      </div>
-                    ) : githubStats ? (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
-                            <Users className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-white">{githubStats.followers}</div>
-                            <div className="text-xs text-gray-400 mt-1">Followers</div>
-                          </div>
-
-                          <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
-                            <UserPlus className="w-6 h-6 text-blue-400 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-white">{githubStats.following}</div>
-                            <div className="text-xs text-gray-400 mt-1">Following</div>
-                          </div>
-
-                          <div className="bg-slate-800/50 rounded-lg p-4 text-center hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105">
-                            <FolderGit2 className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-white">{githubStats.public_repos}</div>
-                            <div className="text-xs text-gray-400 mt-1">Repositories</div>
-                          </div>
-                        </div>
-
-                        {/* GitHub Profile Button */}
-                        <div className="pt-2">
-                          <a
-                            href="https://github.com/ei-sanu"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full bg-gradient-to-r from-gray-800/80 to-slate-800/80 hover:from-gray-700/80 hover:to-slate-700/80 border border-gray-600/50 hover:border-cyan-400/50 rounded-lg px-4 py-3 flex items-center justify-center space-x-2 transition-all duration-300 transform hover:scale-105 group"
-                          >
-                            <Github className="w-5 h-5 text-gray-300 group-hover:text-cyan-400 transition-colors duration-300" />
-                            <span className="text-gray-300 group-hover:text-cyan-400 font-medium text-sm transition-colors duration-300">
-                              View GitHub Profile
-                            </span>
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center text-gray-400 text-sm mt-4">
-                        Unable to fetch GitHub stats. Please try again later.
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Glowing Cyber Security Enthusiast Badge */}
-                  <div className="relative group">
-                    {/* Animated background glow */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-lg group-hover:opacity-100 transition duration-1000 animate-pulse-slow"></div>
-
-                    {/* Badge container */}
-                    <div className="relative bg-gradient-to-r from-cyan-500/30 via-blue-600/30 to-purple-600/30 p-1 rounded-xl shadow-2xl shadow-blue-500/30 backdrop-blur-xl">
-                      <div className="bg-slate-900/80 backdrop-blur-md px-6 py-4 rounded-lg border border-cyan-400/30">
-                        <div className="flex items-center justify-center space-x-3">
-                          <Shield className="w-6 h-6 text-cyan-400 animate-pulse" />
-                          <h2 className="text-base sm:text-lg lg:text-xl font-black text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 tracking-wider uppercase animate-gradient">
-                            CYBER SECURITY ENTHUSIAST
-                          </h2>
-                          <Lock className="w-6 h-6 text-purple-400 animate-pulse" style={{ animationDelay: '0.5s' }} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {/* GitHub Profile Button - Standalone */}
+                <div className="w-full max-w-xs lg:max-w-sm xl:max-w-md pointer-events-auto">
+                  <a
+                    href="https://github.com/ei-sanu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-gradient-to-r from-gray-800/80 to-slate-800/80 hover:from-gray-700/80 hover:to-slate-700/80 border border-gray-600/50 hover:border-cyan-400/50 rounded-lg px-4 py-3 flex items-center justify-center space-x-2 transition-all duration-300 transform hover:scale-105 group shadow-lg shadow-cyan-500/20"
+                  >
+                    <Github className="w-5 h-5 text-gray-300 group-hover:text-cyan-400 transition-colors duration-300" />
+                    <span className="text-gray-300 group-hover:text-cyan-400 font-medium text-sm transition-colors duration-300">
+                      View GitHub Profile
+                    </span>
+                  </a>
                 </div>
               </div>
 
