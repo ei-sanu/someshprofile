@@ -10,6 +10,7 @@ export const projects: Project[] = [
     liveUrl: 'https://infernov.tech/',
     category: 'Platform Development'
   },
+
   {
     id: '2',
     title: 'Fast Connect',
@@ -65,7 +66,7 @@ export const projects: Project[] = [
     description: 'VNL Scanner helps you identify security issues in websites with our advanced simulation technology. Protect your digital assets with comprehensive security analysis. The platform leverages custom-trained methodologies to detect vulnerabilities through sophisticated scanning techniques, designed specifically for educational purposes and web security research.',
     imageUrl: '/project4.png',
     techStack: ['React', 'TypeScript', 'Security', 'AI Analysis'],
-    
+
     liveUrl: 'https://vnlscanner.vercel.app/',
     category: 'Security'
   },
@@ -137,6 +138,16 @@ export const projects: Project[] = [
     techStack: ['Security', 'Vulnerabilities', 'Awareness'],
     githubUrl: 'https://github.com/ei-sanu/dharma',
     liveUrl: 'https://dharma-five.vercel.app/',
+    category: 'Security'
+  },
+  {
+    id: '15',
+    title: 'BLORAM',
+    description: 'It is a blog platform that focuses on uploading blogs to the website and it is built by me from the scratch. It was built by me to enhance my skills in FULL stack and also to provide a platform for bloggers to share their thoughts and ideas with the world.',
+    imageUrl: 'https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&w=800',
+    techStack: ['Full stack', 'Scratch', 'Development'],
+    githubUrl: 'https://github.com/ei-sanu/blogram',
+    liveUrl: 'https://github.com/ei-sanu/blogram',
     category: 'Security'
   },
 ];
