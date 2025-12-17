@@ -144,7 +144,7 @@ export const projects: Project[] = [
     id: '15',
     title: 'BLORAM',
     description: 'It is a blog platform that focuses on uploading blogs to the website and it is built by me from the scratch. It was built by me to enhance my skills in FULL stack and also to provide a platform for bloggers to share their thoughts and ideas with the world.',
-    imageUrl: 'https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&w=800',
+    imageUrl: '',
     techStack: ['Full stack', 'Scratch', 'Development'],
     githubUrl: 'https://github.com/ei-sanu/blogram',
     liveUrl: 'https://github.com/ei-sanu/blogram',
