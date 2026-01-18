@@ -381,20 +381,15 @@ export default function Hero() {
                   </a>
                 </div>
 
-                {/* TryHackMe Badge */}
-                <div className="w-full max-w-xs lg:max-w-sm xl:max-w-md pointer-events-auto">
-                  <a
-                    href="https://tryhackme.com/p/Sanu2511"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full bg-gradient-to-r from-slate-800/80 to-gray-800/80 hover:from-slate-700/80 hover:to-gray-700/80 border border-gray-600/50 hover:border-green-400/50 rounded-lg p-3 transition-all duration-300 transform hover:scale-105 group shadow-lg shadow-green-500/20"
-                  >
-                    <img
-                      src="https://tryhackme-badges.s3.amazonaws.com/Sanu2511.png"
-                      alt="TryHackMe Badge"
-                      className="w-full h-auto rounded transition-all duration-300 group-hover:brightness-110"
-                    />
-                  </a>
+                {/* TryHackMe Badge (iframe only, centered to match photo) */}
+                <div className="mx-auto w-[16rem] sm:w-[20rem] lg:w-[24rem] xl:w-[28rem] transform md:translate-x-8 lg:translate-x-12 xl:translate-x-16">
+                  <iframe
+                    src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=5163573"
+                    title="TryHackMe Badge"
+                    loading="lazy"
+                    style={{ border: 'none' }}
+                    className="w-full h-16 sm:h-20 md:h-24 lg:h-24 xl:h-24 rounded-md"
+                  />
                 </div>
               </div>
 
