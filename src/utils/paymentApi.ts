@@ -791,36 +791,40 @@ export async function getMonthlyEarnings() {
  */
 export async function getPreviousMonthStats() {
     try {
-        // Get stats from 30-60 days ago (previous month)
-        const { data, error } = await supabase.rpc('get_previous_month_stats');
+        // Try to use the database function first
+        const { data, error } = await supabase.rpc('get_previous_month_stats').single();
 
-        if (error) {
-            console.error('Error fetching previous month stats:', error);
-            // Fallback: calculate manually
-            const { data: prevTransactions } = await supabase
-                .from('transactions')
-                .select('amount, status, created_at')
-                .eq('status', 'success')
-                .gte('created_at', new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString())
-                .lt('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
-
-            const prevMonthEarnings = prevTransactions?.reduce((sum, t) => sum + t.amount, 0) || 0;
-            
-            const { data: allPrevTransactions } = await supabase
-                .from('transactions')
-                .select('amount')
-                .eq('status', 'success')
-                .lt('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
-
-            const totalPrevEarnings = allPrevTransactions?.reduce((sum, t) => sum + t.amount, 0) || 0;
-
+        if (!error && data) {
             return {
-                total_earnings: totalPrevEarnings,
-                monthly_earnings: prevMonthEarnings
+                total_earnings: Number(data.total_earnings) || 0,
+                monthly_earnings: Number(data.monthly_earnings) || 0
             };
         }
 
-        return data;
+        // Fallback: calculate manually if RPC fails
+        console.log('Using fallback calculation for previous month stats');
+
+        const { data: prevTransactions } = await supabase
+            .from('transactions')
+            .select('amount, status, created_at')
+            .eq('status', 'success')
+            .gte('created_at', new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString())
+            .lt('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+        const prevMonthEarnings = prevTransactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+
+        const { data: allPrevTransactions } = await supabase
+            .from('transactions')
+            .select('amount')
+            .eq('status', 'success')
+            .lt('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+        const totalPrevEarnings = allPrevTransactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+
+        return {
+            total_earnings: totalPrevEarnings,
+            monthly_earnings: prevMonthEarnings
+        };
     } catch (error) {
         console.error('Error fetching previous month stats:', error);
         return {

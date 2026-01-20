@@ -43,7 +43,7 @@ export function generateInvoicePDF(data: InvoiceData): void {
     doc.setFontSize(28);
     doc.setFont('helvetica', 'bold');
     doc.text('PAYMENT RECEIPT', margin, 25);
-    
+
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text('Transaction Confirmation', margin, 35);
@@ -56,7 +56,7 @@ export function generateInvoicePDF(data: InvoiceData): void {
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text(payment.payment_number, invoiceBoxX, 27);
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.text('Date', invoiceBoxX, 37);
@@ -92,17 +92,17 @@ export function generateInvoicePDF(data: InvoiceData): void {
     // Customer Information Section
     doc.setFillColor(249, 250, 251);
     doc.rect(margin, currentY, (pageWidth - 2 * margin) / 2 - 5, 35, 'F');
-    
+
     doc.setTextColor(55, 65, 81);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text('BILLED TO', margin + 5, currentY + 8);
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(75, 85, 99);
     doc.text(userInfo.name || 'Customer', margin + 5, currentY + 16);
-    
+
     doc.setFontSize(9);
     doc.setTextColor(107, 114, 128);
     doc.text(userInfo.email, margin + 5, currentY + 23);
@@ -114,12 +114,12 @@ export function generateInvoicePDF(data: InvoiceData): void {
     const detailsX = pageWidth / 2 + 5;
     doc.setFillColor(249, 250, 251);
     doc.rect(detailsX, currentY, (pageWidth - 2 * margin) / 2 - 5, 35, 'F');
-    
+
     doc.setTextColor(55, 65, 81);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text('TRANSACTION DETAILS', detailsX + 5, currentY + 8);
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(107, 114, 128);
@@ -127,7 +127,7 @@ export function generateInvoicePDF(data: InvoiceData): void {
     doc.setTextColor(75, 85, 99);
     doc.setFontSize(8);
     doc.text(transaction.transaction_id || 'N/A', detailsX + 5, currentY + 22);
-    
+
     if (transaction.payu_transaction_id) {
         doc.setFontSize(9);
         doc.setTextColor(107, 114, 128);
@@ -143,7 +143,7 @@ export function generateInvoicePDF(data: InvoiceData): void {
     doc.setDrawColor(229, 231, 235);
     doc.setLineWidth(0.5);
     doc.line(margin, currentY, pageWidth - margin, currentY);
-    
+
     currentY += 12;
     doc.setTextColor(55, 65, 81);
     doc.setFontSize(12);
@@ -198,7 +198,7 @@ export function generateInvoicePDF(data: InvoiceData): void {
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('TOTAL PAID', margin + 5, currentY + 13);
-    
+
     doc.setTextColor(6, 182, 212);
     doc.setFontSize(16);
     const totalText = `${payment.currency} ${payment.amount.toFixed(2)}`;
@@ -228,12 +228,12 @@ export function generateInvoicePDF(data: InvoiceData): void {
         doc.setDrawColor(229, 231, 235);
         doc.line(margin, currentY, pageWidth - margin, currentY);
         currentY += 8;
-        
+
         doc.setTextColor(55, 65, 81);
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
         doc.text('Notes', margin, currentY);
-        
+
         currentY += 7;
         doc.setTextColor(107, 114, 128);
         doc.setFont('helvetica', 'normal');
@@ -247,13 +247,13 @@ export function generateInvoicePDF(data: InvoiceData): void {
     const footerY = pageHeight - 30;
     doc.setDrawColor(229, 231, 235);
     doc.line(margin, footerY, pageWidth - margin, footerY);
-    
+
     doc.setTextColor(156, 163, 175);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.text('Thank you for your payment!', pageWidth / 2, footerY + 8, { align: 'center' });
     doc.text('This is a computer-generated receipt and does not require a signature.', pageWidth / 2, footerY + 14, { align: 'center' });
-    
+
     doc.setFontSize(7);
     doc.text(`Generated on ${new Date().toLocaleString('en-IN')}`, pageWidth / 2, footerY + 20, { align: 'center' });
 

@@ -182,6 +182,9 @@ BEGIN
             CASE
                 WHEN t.status = 'success'
                 AND t.created_at < CURRENT_DATE - INTERVAL '30 days' THEN t.amount
+                WHEN pr.status = 'completed'
+                AND t.id IS NULL
+                AND pr.updated_at < CURRENT_DATE - INTERVAL '30 days' THEN pr.amount
             END
         ), 0) as total_earnings,
         COALESCE(SUM(
@@ -189,9 +192,14 @@ BEGIN
                 WHEN t.status = 'success'
                 AND t.created_at >= CURRENT_DATE - INTERVAL '60 days'
                 AND t.created_at < CURRENT_DATE - INTERVAL '30 days' THEN t.amount
+                WHEN pr.status = 'completed'
+                AND t.id IS NULL
+                AND pr.updated_at >= CURRENT_DATE - INTERVAL '60 days'
+                AND pr.updated_at < CURRENT_DATE - INTERVAL '30 days' THEN pr.amount
             END
         ), 0) as monthly_earnings
-    FROM transactions t;
+    FROM payment_requests pr
+    LEFT JOIN transactions t ON pr.id = t.payment_request_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -359,6 +367,8 @@ SELECT
         SUM(
             CASE
                 WHEN t.status = 'success' THEN t.amount
+                WHEN pr.status = 'completed'
+                AND t.id IS NULL THEN pr.amount
             END
         ),
         0
@@ -368,6 +378,9 @@ SELECT
             CASE
                 WHEN t.status = 'success'
                 AND t.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN t.amount
+                WHEN pr.status = 'completed'
+                AND t.id IS NULL
+                AND pr.updated_at >= CURRENT_DATE - INTERVAL '30 days' THEN pr.amount
             END
         ),
         0

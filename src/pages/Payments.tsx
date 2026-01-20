@@ -13,20 +13,18 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Notification, PaymentWithTransaction } from '../types/payment';
+import { downloadInvoice } from '../utils/invoiceGenerator';
 import {
     clientAcceptPayment,
     getUserNotifications,
     getUserPaymentRequests,
-    markNotificationAsRead,
-    updatePaymentRequestStatus,
-    updateTransaction,
+    markNotificationAsRead
 } from '../utils/paymentApi';
 import {
     formatCurrency,
     initiatePayUPayment,
     submitPayUPayment,
 } from '../utils/paymentGateway';
-import { downloadInvoice } from '../utils/invoiceGenerator';
 import { syncUserToSupabase } from '../utils/userSync';
 
 export default function Payments() {
@@ -126,7 +124,7 @@ export default function Payments() {
         try {
             // Find a successful transaction or create a virtual one for completed payments
             let transaction = payment.transactions?.find(t => t.status === 'success');
-            
+
             if (!transaction && payment.status === 'completed') {
                 // Create a virtual transaction object for completed payments without transaction records
                 transaction = {
@@ -143,7 +141,7 @@ export default function Payments() {
                     updated_at: payment.updated_at || payment.created_at,
                 };
             }
-            
+
             if (!transaction) {
                 alert('This payment has not been completed yet. Receipt will be available after successful payment.');
                 return;
@@ -421,7 +419,7 @@ export default function Payments() {
                                 const successTransaction = payment.transactions?.find(
                                     (t) => t.status === 'success'
                                 );
-                                
+
                                 // For display purposes, use actual transaction or payment data
                                 const displayTransactionId = successTransaction?.transaction_id || payment.payment_number;
                                 const displayGatewayRef = successTransaction?.payu_transaction_id;
@@ -445,7 +443,7 @@ export default function Payments() {
                                                     </span>
                                                 </div>
                                                 <p className="text-gray-300 mb-3">{payment.description}</p>
-                                                
+
                                                 <div className="space-y-2 text-sm">
                                                     <div className="flex items-center text-gray-400">
                                                         <Clock className="w-4 h-4 mr-2" />
@@ -477,7 +475,7 @@ export default function Payments() {
                                                     )}
                                                 </div>
                                             </div>
-                                            
+
                                             <div className="flex flex-col items-end gap-3">
                                                 <div className="text-right">
                                                     <p className="text-sm text-gray-400 mb-1">Amount Paid</p>
@@ -485,7 +483,7 @@ export default function Payments() {
                                                         {formatCurrency(payment.amount, payment.currency)}
                                                     </p>
                                                 </div>
-                                                
+
                                                 <button
                                                     onClick={() => handleDownloadInvoice(payment)}
                                                     className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50"

@@ -42,6 +42,9 @@ export default function AdminDashboard() {
                 getPreviousMonthStats(),
             ]);
 
+            console.log('Dashboard Stats:', statsData);
+            console.log('Previous Month Stats:', prevStats);
+
             setStats(statsData);
             setMonthlyData(monthlyEarningsData);
             setPrevMonthStats(prevStats);
@@ -70,20 +73,32 @@ export default function AdminDashboard() {
 
     // Calculate percentage changes
     const calculatePercentageChange = (current: number, previous: number): string => {
+        // Handle invalid numbers
+        if (!isFinite(current) || !isFinite(previous) || isNaN(current) || isNaN(previous)) {
+            return '0%';
+        }
+
         if (previous === 0) {
             return current > 0 ? '+100%' : '0%';
         }
+
         const change = ((current - previous) / previous) * 100;
+
+        // Check if the result is valid
+        if (!isFinite(change) || isNaN(change)) {
+            return '0%';
+        }
+
         return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
     };
 
-    const totalEarningsChange = prevMonthStats 
-        ? calculatePercentageChange(stats.total_earnings, prevMonthStats.total_earnings)
-        : '+0%';
-    
-    const monthlyEarningsChange = prevMonthStats
-        ? calculatePercentageChange(stats.monthly_earnings, prevMonthStats.monthly_earnings)
-        : '+0%';
+    const totalEarningsChange = prevMonthStats && stats
+        ? calculatePercentageChange(stats.total_earnings || 0, prevMonthStats.total_earnings || 0)
+        : '0%';
+
+    const monthlyEarningsChange = prevMonthStats && stats
+        ? calculatePercentageChange(stats.monthly_earnings || 0, prevMonthStats.monthly_earnings || 0)
+        : '0%';
 
     const statCards = [
         {
@@ -139,11 +154,10 @@ export default function AdminDashboard() {
                                 <stat.icon className="w-6 h-6 text-white" />
                             </div>
                             {stat.change && (
-                                <span className={`text-sm font-medium ${
-                                    stat.change.startsWith('+') ? 'text-green-400' : 
-                                    stat.change.startsWith('-') ? 'text-red-400' : 
-                                    'text-gray-400'
-                                }`}>{stat.change}</span>
+                                <span className={`text-sm font-medium ${stat.change.startsWith('+') ? 'text-green-400' :
+                                    stat.change.startsWith('-') ? 'text-red-400' :
+                                        'text-gray-400'
+                                    }`}>{stat.change}</span>
                             )}
                         </div>
                         <h3 className="text-gray-400 text-sm mb-1">{stat.title}</h3>
@@ -241,7 +255,7 @@ export default function AdminDashboard() {
                                 className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
                                 style={{
                                     width: `${((stats.successful_transactions || 0) /
-                                            ((stats.successful_transactions || 0) + (stats.failed_transactions || 0) || 1)) *
+                                        ((stats.successful_transactions || 0) + (stats.failed_transactions || 0) || 1)) *
                                         100
                                         }%`,
                                 }}
@@ -258,7 +272,7 @@ export default function AdminDashboard() {
                                 className="bg-gradient-to-r from-red-500 to-orange-500 h-3 rounded-full transition-all duration-500"
                                 style={{
                                     width: `${((stats.failed_transactions || 0) /
-                                            ((stats.successful_transactions || 0) + (stats.failed_transactions || 0) || 1)) *
+                                        ((stats.successful_transactions || 0) + (stats.failed_transactions || 0) || 1)) *
                                         100
                                         }%`,
                                 }}
