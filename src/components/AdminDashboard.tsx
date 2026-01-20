@@ -20,13 +20,14 @@ import {
     YAxis
 } from 'recharts';
 import type { DashboardStats, MonthlyEarnings } from '../types/payment';
-import { getDashboardStats, getMonthlyEarnings } from '../utils/paymentApi';
+import { getDashboardStats, getMonthlyEarnings, getPreviousMonthStats } from '../utils/paymentApi';
 import { formatCurrency } from '../utils/paymentGateway';
 
 export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [monthlyData, setMonthlyData] = useState<MonthlyEarnings[]>([]);
+    const [prevMonthStats, setPrevMonthStats] = useState<{ total_earnings: number; monthly_earnings: number } | null>(null);
 
     useEffect(() => {
         fetchDashboardData();
@@ -35,13 +36,15 @@ export default function AdminDashboard() {
     async function fetchDashboardData() {
         try {
             setLoading(true);
-            const [statsData, monthlyEarningsData] = await Promise.all([
+            const [statsData, monthlyEarningsData, prevStats] = await Promise.all([
                 getDashboardStats(),
                 getMonthlyEarnings(),
+                getPreviousMonthStats(),
             ]);
 
             setStats(statsData);
             setMonthlyData(monthlyEarningsData);
+            setPrevMonthStats(prevStats);
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
         } finally {
@@ -65,31 +68,48 @@ export default function AdminDashboard() {
         );
     }
 
+    // Calculate percentage changes
+    const calculatePercentageChange = (current: number, previous: number): string => {
+        if (previous === 0) {
+            return current > 0 ? '+100%' : '0%';
+        }
+        const change = ((current - previous) / previous) * 100;
+        return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+    };
+
+    const totalEarningsChange = prevMonthStats 
+        ? calculatePercentageChange(stats.total_earnings, prevMonthStats.total_earnings)
+        : '+0%';
+    
+    const monthlyEarningsChange = prevMonthStats
+        ? calculatePercentageChange(stats.monthly_earnings, prevMonthStats.monthly_earnings)
+        : '+0%';
+
     const statCards = [
         {
             title: 'Total Earnings',
-            value: formatCurrency(stats.total_earnings, 'INR'),
+            value: formatCurrency(stats.total_earnings || 0, 'INR'),
             icon: DollarSign,
             color: 'from-green-500 to-emerald-500',
-            change: '+12%',
+            change: totalEarningsChange,
         },
         {
             title: 'Monthly Earnings',
-            value: formatCurrency(stats.monthly_earnings, 'INR'),
+            value: formatCurrency(stats.monthly_earnings || 0, 'INR'),
             icon: TrendingUp,
             color: 'from-blue-500 to-cyan-500',
-            change: '+8%',
+            change: monthlyEarningsChange,
         },
         {
             title: 'Completed Payments',
-            value: stats.completed_payments.toString(),
+            value: (stats.completed_payments || 0).toString(),
             icon: CheckCircle,
             color: 'from-purple-500 to-pink-500',
-            subtext: `of ${stats.total_payments} total`,
+            subtext: `of ${stats.total_payments || 0} total`,
         },
         {
             title: 'Pending Approvals',
-            value: stats.pending_payments.toString(),
+            value: (stats.pending_payments || 0).toString(),
             icon: Clock,
             color: 'from-yellow-500 to-orange-500',
             subtext: 'requires action',
@@ -119,7 +139,11 @@ export default function AdminDashboard() {
                                 <stat.icon className="w-6 h-6 text-white" />
                             </div>
                             {stat.change && (
-                                <span className="text-green-400 text-sm font-medium">{stat.change}</span>
+                                <span className={`text-sm font-medium ${
+                                    stat.change.startsWith('+') ? 'text-green-400' : 
+                                    stat.change.startsWith('-') ? 'text-red-400' : 
+                                    'text-gray-400'
+                                }`}>{stat.change}</span>
                             )}
                         </div>
                         <h3 className="text-gray-400 text-sm mb-1">{stat.title}</h3>
@@ -209,15 +233,15 @@ export default function AdminDashboard() {
                         <div className="flex justify-between items-center mb-2">
                             <span className="text-gray-400">Successful Transactions</span>
                             <span className="text-green-400 font-medium">
-                                {stats.successful_transactions} / {stats.successful_transactions + stats.failed_transactions}
+                                {stats.successful_transactions || 0} / {(stats.successful_transactions || 0) + (stats.failed_transactions || 0)}
                             </span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-3">
                             <div
                                 className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
                                 style={{
-                                    width: `${(stats.successful_transactions /
-                                            (stats.successful_transactions + stats.failed_transactions || 1)) *
+                                    width: `${((stats.successful_transactions || 0) /
+                                            ((stats.successful_transactions || 0) + (stats.failed_transactions || 0) || 1)) *
                                         100
                                         }%`,
                                 }}
@@ -227,14 +251,14 @@ export default function AdminDashboard() {
                     <div>
                         <div className="flex justify-between items-center mb-2">
                             <span className="text-gray-400">Failed Transactions</span>
-                            <span className="text-red-400 font-medium">{stats.failed_transactions}</span>
+                            <span className="text-red-400 font-medium">{stats.failed_transactions || 0}</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-3">
                             <div
                                 className="bg-gradient-to-r from-red-500 to-orange-500 h-3 rounded-full transition-all duration-500"
                                 style={{
-                                    width: `${(stats.failed_transactions /
-                                            (stats.successful_transactions + stats.failed_transactions || 1)) *
+                                    width: `${((stats.failed_transactions || 0) /
+                                            ((stats.successful_transactions || 0) + (stats.failed_transactions || 0) || 1)) *
                                         100
                                         }%`,
                                 }}

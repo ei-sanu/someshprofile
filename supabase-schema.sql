@@ -169,6 +169,32 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Function to get previous month statistics for comparison
+CREATE OR REPLACE FUNCTION get_previous_month_stats()
+RETURNS TABLE (
+    total_earnings NUMERIC,
+    monthly_earnings NUMERIC
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        COALESCE(SUM(
+            CASE
+                WHEN t.status = 'success'
+                AND t.created_at < CURRENT_DATE - INTERVAL '30 days' THEN t.amount
+            END
+        ), 0) as total_earnings,
+        COALESCE(SUM(
+            CASE
+                WHEN t.status = 'success'
+                AND t.created_at >= CURRENT_DATE - INTERVAL '60 days'
+                AND t.created_at < CURRENT_DATE - INTERVAL '30 days' THEN t.amount
+            END
+        ), 0) as monthly_earnings
+    FROM transactions t;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Row Level Security (RLS) - DISABLED for easier development
 -- To enable RLS with proper policies, see the bottom of this file
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;

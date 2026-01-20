@@ -26,6 +26,7 @@ import {
     initiatePayUPayment,
     submitPayUPayment,
 } from '../utils/paymentGateway';
+import { downloadInvoice } from '../utils/invoiceGenerator';
 import { syncUserToSupabase } from '../utils/userSync';
 
 export default function Payments() {
@@ -36,7 +37,6 @@ export default function Payments() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [activeTab, setActiveTab] = useState<'payments' | 'verify' | 'transactions'>('payments');
     const [currentUser, setCurrentUser] = useState<any>(null);
-    const [demoMode, setDemoMode] = useState(false); // Toggle for demo payment mode
 
     useEffect(() => {
         if (!user) {
@@ -104,39 +104,7 @@ export default function Payments() {
         try {
             if (!currentUser) return;
 
-            if (demoMode) {
-                // Demo Mode: Simulate payment locally
-                const confirmPayment = window.confirm(
-                    `Demo Payment\n\nAmount: ${formatCurrency(payment.amount)}\nDescription: ${payment.description}\n\nClick OK to simulate SUCCESS or Cancel to simulate FAILURE`
-                );
-
-                if (confirmPayment) {
-                    // Simulate success
-                    setTimeout(async () => {
-                        try {
-                            await updatePaymentRequestStatus(payment.id, 'completed');
-                            if (payment.transaction_id) {
-                                await updateTransaction(payment.transaction_id, {
-                                    status: 'completed',
-                                    payment_method: 'DEMO',
-                                    gateway_transaction_id: `DEMO_${Date.now()}`,
-                                });
-                            }
-                            alert('✅ Demo Payment Successful!');
-                            await initializeUser();
-                        } catch (error) {
-                            console.error('Error updating payment:', error);
-                            alert(`Error updating payment status: ${error instanceof Error ? error.message : 'Unknown error'}`);
-                        }
-                    }, 1000);
-                } else {
-                    // Simulate failure
-                    alert('❌ Demo Payment Cancelled');
-                }
-                return;
-            }
-
-            // Real PayU Mode
+            // Initiate PayU payment
             const paymentData = initiatePayUPayment({
                 amount: payment.amount,
                 productinfo: payment.description,
@@ -151,6 +119,46 @@ export default function Payments() {
         } catch (error) {
             console.error('Error initiating payment:', error);
             alert('Failed to initiate payment');
+        }
+    }
+
+    function handleDownloadInvoice(payment: PaymentWithTransaction) {
+        try {
+            // Find a successful transaction or create a virtual one for completed payments
+            let transaction = payment.transactions?.find(t => t.status === 'success');
+            
+            if (!transaction && payment.status === 'completed') {
+                // Create a virtual transaction object for completed payments without transaction records
+                transaction = {
+                    id: payment.id,
+                    payment_request_id: payment.id,
+                    transaction_id: payment.payment_number,
+                    payu_transaction_id: undefined,
+                    amount: payment.amount,
+                    currency: payment.currency,
+                    status: 'success' as const,
+                    payment_gateway: 'Online Payment',
+                    payment_method: 'Online',
+                    created_at: payment.updated_at || payment.created_at,
+                    updated_at: payment.updated_at || payment.created_at,
+                };
+            }
+            
+            if (!transaction) {
+                alert('This payment has not been completed yet. Receipt will be available after successful payment.');
+                return;
+            }
+
+            const userInfo = {
+                name: `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || payment.client_name || 'Customer',
+                email: user?.emailAddresses[0]?.emailAddress || payment.client_email,
+                phone: user?.phoneNumbers?.[0]?.phoneNumber || payment.client_phone
+            };
+
+            downloadInvoice(payment, transaction, userInfo);
+        } catch (error) {
+            console.error('Error downloading invoice:', error);
+            alert('Failed to generate invoice. Please try again.');
         }
     }
 
@@ -236,27 +244,6 @@ export default function Payments() {
                     <p className="text-gray-400 text-lg">
                         Manage your payments and view transaction history
                     </p>
-
-                    {/* Demo Mode Toggle */}
-                    <div className="mt-6 flex items-center justify-center gap-3">
-                        <label className="flex items-center cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={demoMode}
-                                onChange={(e) => setDemoMode(e.target.checked)}
-                                className="sr-only peer"
-                            />
-                            <div className="relative w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
-                            <span className="ms-3 text-sm font-medium text-gray-300">
-                                {demoMode ? '🎮 Demo Mode (Local Testing)' : '💳 PayU Mode (Real Gateway)'}
-                            </span>
-                        </label>
-                    </div>
-                    {demoMode && (
-                        <p className="text-yellow-400 text-sm mt-2">
-                            ⚠️ Demo mode: Payments will be simulated locally without PayU
-                        </p>
-                    )}
                 </div>
 
                 {/* Notifications */}
@@ -421,62 +408,103 @@ export default function Payments() {
                     </div>
                 ) : activeTab === 'verify' ? (
                     <div className="space-y-6">
+                        <div className="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 mb-6">
+                            <h3 className="text-lg font-semibold text-white mb-2">Recent Transactions</h3>
+                            <p className="text-gray-400 text-sm">
+                                View and download receipts for your completed transactions
+                            </p>
+                        </div>
+
                         {payments
                             .filter((p) => p.status === 'completed' || p.transactions?.some((t) => t.status === 'success'))
                             .map((payment) => {
                                 const successTransaction = payment.transactions?.find(
                                     (t) => t.status === 'success'
                                 );
+                                
+                                // For display purposes, use actual transaction or payment data
+                                const displayTransactionId = successTransaction?.transaction_id || payment.payment_number;
+                                const displayGatewayRef = successTransaction?.payu_transaction_id;
+                                const displayPaymentMethod = successTransaction?.payment_method;
+                                const displayDate = successTransaction?.created_at || payment.updated_at || payment.created_at;
 
                                 return (
                                     <div
                                         key={payment.id}
-                                        className="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10"
+                                        className="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:border-cyan-500/30 transition-all"
                                     >
-                                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                                            <div>
-                                                <div className="flex items-center space-x-3 mb-2">
+                                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                                            <div className="flex-1">
+                                                <div className="flex items-center space-x-3 mb-3">
+                                                    <CheckCircle className="w-5 h-5 text-green-400" />
                                                     <h3 className="text-xl font-semibold text-white">
                                                         {payment.payment_number}
                                                     </h3>
-                                                    <span className="flex items-center space-x-1 px-3 py-1 rounded-full text-sm bg-green-500/20 text-green-400">
-                                                        <CheckCircle className="w-4 h-4" />
-                                                        <span>Completed</span>
+                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
+                                                        Completed
                                                     </span>
                                                 </div>
-                                                <p className="text-gray-400">{payment.description}</p>
-                                                {successTransaction && (
-                                                    <p className="text-sm text-gray-500 mt-1">
-                                                        Transaction ID: {successTransaction.transaction_id}
-                                                    </p>
-                                                )}
+                                                <p className="text-gray-300 mb-3">{payment.description}</p>
+                                                
+                                                <div className="space-y-2 text-sm">
+                                                    <div className="flex items-center text-gray-400">
+                                                        <Clock className="w-4 h-4 mr-2" />
+                                                        <span>
+                                                            {new Date(displayDate).toLocaleString('en-IN', {
+                                                                dateStyle: 'medium',
+                                                                timeStyle: 'short'
+                                                            })}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-start text-gray-400">
+                                                        <CreditCard className="w-4 h-4 mr-2 mt-0.5" />
+                                                        <div>
+                                                            <p className="font-mono text-xs">
+                                                                Transaction ID: {displayTransactionId}
+                                                            </p>
+                                                            {displayGatewayRef && (
+                                                                <p className="font-mono text-xs mt-1">
+                                                                    Reference: {displayGatewayRef}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    {displayPaymentMethod && (
+                                                        <div className="flex items-center text-gray-400">
+                                                            <Wallet className="w-4 h-4 mr-2" />
+                                                            <span>Payment Method: {displayPaymentMethod}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="mt-4 md:mt-0 text-right">
-                                                <p className="text-3xl font-bold text-green-400">
-                                                    {formatCurrency(payment.amount, payment.currency)}
-                                                </p>
+                                            
+                                            <div className="flex flex-col items-end gap-3">
+                                                <div className="text-right">
+                                                    <p className="text-sm text-gray-400 mb-1">Amount Paid</p>
+                                                    <p className="text-3xl font-bold text-green-400">
+                                                        {formatCurrency(payment.amount, payment.currency)}
+                                                    </p>
+                                                </div>
+                                                
+                                                <button
+                                                    onClick={() => handleDownloadInvoice(payment)}
+                                                    className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50"
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                    <span>Download Receipt</span>
+                                                </button>
                                             </div>
                                         </div>
-
-                                        {successTransaction?.invoice_url && (
-                                            <button
-                                                onClick={() => window.open(successTransaction.invoice_url, '_blank')}
-                                                className="flex items-center space-x-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-all"
-                                            >
-                                                <Download className="w-4 h-4" />
-                                                <span>Download Invoice</span>
-                                            </button>
-                                        )}
                                     </div>
                                 );
                             })}
 
-                        {payments.filter((p) => p.status === 'completed').length === 0 && (
+                        {payments.filter((p) => p.status === 'completed' || p.transactions?.some((t) => t.status === 'success')).length === 0 && (
                             <div className="bg-white/5 backdrop-blur-lg rounded-xl p-12 text-center">
                                 <FileCheck className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                                <h3 className="text-xl text-gray-300 mb-2">No Completed Payments</h3>
+                                <h3 className="text-xl text-gray-300 mb-2">No Completed Transactions</h3>
                                 <p className="text-gray-500">
-                                    Your completed payments will appear here.
+                                    Your completed transactions will appear here for download.
                                 </p>
                             </div>
                         )}
