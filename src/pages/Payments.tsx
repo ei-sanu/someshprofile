@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PaymentAcceptanceModal from '../components/PaymentAcceptanceModal';
 import type { Notification, PaymentWithTransaction } from '../types/payment';
 import { downloadInvoice } from '../utils/invoiceGenerator';
 import {
@@ -35,6 +36,8 @@ export default function Payments() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [activeTab, setActiveTab] = useState<'payments' | 'verify' | 'transactions'>('payments');
     const [currentUser, setCurrentUser] = useState<any>(null);
+    const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
+    const [selectedPayment, setSelectedPayment] = useState<PaymentWithTransaction | null>(null);
 
     useEffect(() => {
         if (!user) {
@@ -87,14 +90,46 @@ export default function Payments() {
         }
     }
 
-    async function handleAcceptPayment(paymentId: string) {
+    function openAcceptanceModal(payment: PaymentWithTransaction) {
+        setSelectedPayment(payment);
+        setShowAcceptanceModal(true);
+    }
+
+    async function handleAcceptPayment() {
+        if (!selectedPayment) return;
+
         try {
-            await clientAcceptPayment(paymentId, currentUser?.id);
+            await clientAcceptPayment(selectedPayment.id, currentUser?.id);
+            setShowAcceptanceModal(false);
+            setSelectedPayment(null);
             await initializeUser(); // Refresh data
-            alert('Payment accepted! You can now proceed to pay.');
+            
+            // Show success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 animate-slide-in';
+            successDiv.innerHTML = `
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Payment accepted! You can now proceed to pay.</span>
+            `;
+            document.body.appendChild(successDiv);
+            setTimeout(() => successDiv.remove(), 3000);
         } catch (error) {
             console.error('Error accepting payment:', error);
-            alert('Failed to accept payment');
+            setShowAcceptanceModal(false);
+            
+            // Show error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed top-4 right-4 z-50 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 animate-slide-in';
+            errorDiv.innerHTML = `
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span>Failed to accept payment. Please try again.</span>
+            `;
+            document.body.appendChild(errorDiv);
+            setTimeout(() => errorDiv.remove(), 3000);
         }
     }
 
@@ -382,7 +417,7 @@ export default function Payments() {
                                         <div className="flex flex-wrap gap-4">
                                             {payment.status === 'pending_client_review' && !payment.client_accepted && (
                                                 <button
-                                                    onClick={() => handleAcceptPayment(payment.id)}
+                                                    onClick={() => openAcceptanceModal(payment)}
                                                     className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg font-medium transition-all"
                                                 >
                                                     <CheckCircle className="w-5 h-5" />
@@ -594,6 +629,24 @@ export default function Payments() {
                         )}
                     </div>
                 ) : null}
+
+                {/* Payment Acceptance Modal */}
+                {selectedPayment && (
+                    <PaymentAcceptanceModal
+                        isOpen={showAcceptanceModal}
+                        onClose={() => {
+                            setShowAcceptanceModal(false);
+                            setSelectedPayment(null);
+                        }}
+                        onAccept={handleAcceptPayment}
+                        payment={{
+                            payment_number: selectedPayment.payment_number,
+                            amount: selectedPayment.amount,
+                            currency: selectedPayment.currency,
+                            description: selectedPayment.description
+                        }}
+                    />
+                )}
             </div>
         </div>
     );
