@@ -16,7 +16,7 @@ import Terms from './pages/Terms';
 import Transactions from './pages/Transactions';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
+//errror handling
 if (!PUBLISHABLE_KEY) {
   console.warn('Missing Clerk Publishable Key. Please add VITE_CLERK_PUBLISHABLE_KEY to your .env file');
 }
