@@ -10,7 +10,7 @@ import {
     Wallet,
     XCircle,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PaymentAcceptanceModal from '../components/PaymentAcceptanceModal';
 import type { Notification, PaymentWithTransaction } from '../types/payment';
@@ -35,20 +35,11 @@ export default function Payments() {
     const [payments, setPayments] = useState<PaymentWithTransaction[]>([]);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [activeTab, setActiveTab] = useState<'payments' | 'verify' | 'transactions'>('payments');
-    const [currentUser, setCurrentUser] = useState<any>(null);
+    const [currentUser, setCurrentUser] = useState<{ id: string; first_name?: string; last_name?: string; email: string } | null>(null);
     const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState<PaymentWithTransaction | null>(null);
 
-    useEffect(() => {
-        if (!user) {
-            navigate('/');
-            return;
-        }
-
-        initializeUser();
-    }, [user]);
-
-    async function initializeUser() {
+    const initializeUser = useCallback(async () => {
         try {
             setLoading(true);
 
@@ -67,15 +58,12 @@ export default function Payments() {
             const email = user!.emailAddresses[0]?.emailAddress;
             const phone = user!.phoneNumbers?.[0]?.phoneNumber;
 
-            console.log('🔍 Fetching payments for:', { email, phone, userId: syncedUser?.id });
-
             const paymentRequests = await getUserPaymentRequests(
                 syncedUser?.id,
                 email,
                 phone
             );
 
-            console.log('📦 Received payments:', paymentRequests.length);
             setPayments(paymentRequests);
 
             // Fetch notifications
@@ -88,14 +76,23 @@ export default function Payments() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [user]);
 
-    function openAcceptanceModal(payment: PaymentWithTransaction) {
+    useEffect(() => {
+        if (!user) {
+            navigate('/');
+            return;
+        }
+
+        initializeUser();
+    }, [user, navigate, initializeUser]);
+
+    const openAcceptanceModal = useCallback((payment: PaymentWithTransaction) => {
         setSelectedPayment(payment);
         setShowAcceptanceModal(true);
-    }
+    }, []);
 
-    async function handleAcceptPayment() {
+    const handleAcceptPayment = useCallback(async () => {
         if (!selectedPayment) return;
 
         try {
@@ -103,7 +100,7 @@ export default function Payments() {
             setShowAcceptanceModal(false);
             setSelectedPayment(null);
             await initializeUser(); // Refresh data
-            
+
             // Show success message
             const successDiv = document.createElement('div');
             successDiv.className = 'fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 animate-slide-in';
@@ -118,7 +115,7 @@ export default function Payments() {
         } catch (error) {
             console.error('Error accepting payment:', error);
             setShowAcceptanceModal(false);
-            
+
             // Show error message
             const errorDiv = document.createElement('div');
             errorDiv.className = 'fixed top-4 right-4 z-50 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 animate-slide-in';
@@ -131,9 +128,9 @@ export default function Payments() {
             document.body.appendChild(errorDiv);
             setTimeout(() => errorDiv.remove(), 3000);
         }
-    }
+    }, [selectedPayment, currentUser, initializeUser]);
 
-    async function handleMakePayment(payment: PaymentWithTransaction) {
+    const handleMakePayment = useCallback(async (payment: PaymentWithTransaction) => {
         try {
             if (!currentUser) return;
 
@@ -153,9 +150,9 @@ export default function Payments() {
             console.error('Error initiating payment:', error);
             alert('Failed to initiate payment');
         }
-    }
+    }, [currentUser, user]);
 
-    function handleDownloadInvoice(payment: PaymentWithTransaction) {
+    const handleDownloadInvoice = useCallback((payment: PaymentWithTransaction) => {
         try {
             // Find a successful transaction or create a virtual one for completed payments
             let transaction = payment.transactions?.find(t => t.status === 'success');
@@ -193,7 +190,7 @@ export default function Payments() {
             console.error('Error downloading invoice:', error);
             alert('Failed to generate invoice. Please try again.');
         }
-    }
+    }, [user]);
 
     const getStatusColor = (status: string) => {
         switch (status) {

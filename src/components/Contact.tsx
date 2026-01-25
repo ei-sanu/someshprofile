@@ -102,14 +102,16 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-20 bg-slate-900">
+    <section
+      id="contact"
+      className="py-20 bg-slate-900"
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl sm:text-5xl font-bold text-center text-white mb-4">
             Get in <span className="text-cyan-400">Touch</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-cyan-600 mx-auto mb-12" />
-
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="space-y-8">
               <div>

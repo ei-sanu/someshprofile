@@ -13,7 +13,7 @@ export function payuCallbackPlugin(): Plugin {
         // Only handle POST requests to /payment/success and /payment/failure
         if (req.method === 'POST' && (req.url === '/payment/success' || req.url === '/payment/failure')) {
           console.log('🔔 Received PayU POST callback:', req.url);
-          
+
           let body = '';
           req.on('data', (chunk) => {
             body += chunk.toString();
@@ -24,13 +24,13 @@ export function payuCallbackPlugin(): Plugin {
               // Parse the POST data (application/x-www-form-urlencoded)
               const params = new URLSearchParams(body);
               const queryString = params.toString();
-              
+
               console.log('📦 PayU Response Data:', queryString);
-              
+
               // Redirect to GET with query parameters
               const redirectUrl = `${req.url}?${queryString}`;
               console.log('🔀 Redirecting to:', redirectUrl);
-              
+
               res.writeHead(302, {
                 'Location': redirectUrl,
                 'Content-Type': 'text/html',

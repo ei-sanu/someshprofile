@@ -11,6 +11,11 @@ const PAYU_CONFIG = {
     mode: (import.meta.env.VITE_PAYU_MODE || 'test') as 'test' | 'production',
 };
 
+// Validate configuration
+if (!PAYU_CONFIG.merchantKey || !PAYU_CONFIG.merchantSalt) {
+    console.error('PayU credentials are missing. Please check your .env file.');
+}
+
 // PayU URLs
 const PAYU_BASE_URL = {
     test: 'https://test.payu.in/_payment',
@@ -43,19 +48,8 @@ function generateHash(data: {
     const udf5 = data.udf5 || '';
 
     const hashString = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}||||||${data.salt}`;
-    console.log('🔐 Hash String (without salt at end):', hashString.replace(data.salt, '****SALT****'));
-    console.log('📊 Hash Components:', {
-        key: data.key,
-        txnid: data.txnid,
-        amount: data.amount,
-        productinfo: data.productinfo,
-        firstname: data.firstname,
-        email: data.email,
-        udf1, udf2, udf3, udf4, udf5,
-    });
 
     const hash = CryptoJS.SHA512(hashString).toString();
-    console.log('🔑 Generated Hash:', hash);
     return hash;
 }
 

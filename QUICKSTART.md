@@ -140,7 +140,7 @@ CVV: 123
 - 📥 Invoice downloads
 - 🔍 Search and filter payments
 - ✏️ Edit payments before approval
-- 📜 Payment history/audit log
+- 📜 Payment history/audit log₹
 - 📈 Analytics and reports
 
 Enjoy your new payment system! 🚀

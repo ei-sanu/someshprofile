@@ -10,7 +10,7 @@ import {
     Search,
     XCircle
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CreatePaymentRequest, PaymentWithTransaction } from '../types/payment';
 import {
     adminApprovePayment,
@@ -23,7 +23,7 @@ import {
 import { formatCurrency } from '../utils/paymentGateway';
 
 interface Props {
-    currentUser: any;
+    currentUser: { id: string; email: string; is_admin: boolean };
 }
 
 export default function AdminPaymentManager({ currentUser }: Props) {
@@ -34,13 +34,13 @@ export default function AdminPaymentManager({ currentUser }: Props) {
     const [selectedPayment, setSelectedPayment] = useState<PaymentWithTransaction | null>(null);
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [searchQuery, setSearchQuery] = useState('');
-    const [paymentHistory, setPaymentHistory] = useState<any[]>([]);
+    const [paymentHistory, setPaymentHistory] = useState<Array<{ action: string; created_at: string }>>([]);
 
     useEffect(() => {
         fetchPayments();
-    }, []);
+    }, [fetchPayments]);
 
-    async function fetchPayments() {
+    const fetchPayments = useCallback(async () => {
         try {
             setLoading(true);
             const data = await getAllPaymentRequests();
@@ -50,9 +50,9 @@ export default function AdminPaymentManager({ currentUser }: Props) {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
 
-    async function handleCreatePayment(data: CreatePaymentRequest) {
+    const handleCreatePayment = useCallback(async (data: CreatePaymentRequest) => {
         try {
             await createPaymentRequest(data, currentUser.id);
             await fetchPayments();
@@ -61,9 +61,9 @@ export default function AdminPaymentManager({ currentUser }: Props) {
             console.error('Error creating payment:', error);
             alert('Failed to create payment');
         }
-    }
+    }, [currentUser.id, fetchPayments]);
 
-    async function handleApprove(payment: PaymentWithTransaction, updates?: any) {
+    const handleApprove = useCallback(async (payment: PaymentWithTransaction, updates?: Record<string, unknown>) => {
         try {
             await adminApprovePayment(payment.id, currentUser.id, updates);
             await fetchPayments();
@@ -72,9 +72,9 @@ export default function AdminPaymentManager({ currentUser }: Props) {
             console.error('Error approving payment:', error);
             alert('Failed to approve payment');
         }
-    }
+    }, [currentUser.id, fetchPayments]);
 
-    async function handleReject(paymentId: string, reason: string) {
+    const handleReject = useCallback(async (paymentId: string, reason: string) => {
         try {
             await adminRejectPayment(paymentId, currentUser.id, reason);
             await fetchPayments();
@@ -83,9 +83,9 @@ export default function AdminPaymentManager({ currentUser }: Props) {
             console.error('Error rejecting payment:', error);
             alert('Failed to reject payment');
         }
-    }
+    }, [currentUser.id, fetchPayments]);
 
-    async function handleCancel(paymentId: string) {
+    const handleCancel = useCallback(async (paymentId: string) => {
         const reason = prompt('Enter reason for cancellation (optional):');
         if (reason === null) return; // User clicked cancel
 
@@ -97,16 +97,16 @@ export default function AdminPaymentManager({ currentUser }: Props) {
             console.error('Error cancelling payment:', error);
             alert('Failed to cancel payment');
         }
-    }
+    }, [currentUser.id, fetchPayments]);
 
-    async function showPaymentDetails(payment: PaymentWithTransaction) {
+    const showPaymentDetails = useCallback(async (payment: PaymentWithTransaction) => {
         setSelectedPayment(payment);
         const history = await getPaymentHistory(payment.id);
         setPaymentHistory(history);
         setShowDetailsModal(true);
-    }
+    }, []);
 
-    const filteredPayments = payments.filter((payment) => {
+    const filteredPayments = useMemo(() => payments.filter((payment) => {
         const matchesStatus = filterStatus === 'all' || payment.status === filterStatus;
         const matchesSearch =
             searchQuery === '' ||
@@ -115,7 +115,7 @@ export default function AdminPaymentManager({ currentUser }: Props) {
             payment.client_name?.toLowerCase().includes(searchQuery.toLowerCase());
 
         return matchesStatus && matchesSearch;
-    });
+    }), [payments, filterStatus, searchQuery]);
 
     const getStatusColor = (status: string) => {
         switch (status) {

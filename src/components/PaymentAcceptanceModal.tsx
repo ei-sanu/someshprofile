@@ -90,8 +90,8 @@ export default function PaymentAcceptanceModal({
                             <div>
                                 <h4 className="font-semibold text-white mb-2">1. Payment Authorization</h4>
                                 <p className="text-gray-400">
-                                    By clicking "Accept & Verify", you authorize the payment of the specified amount 
-                                    for the services/products described. This payment is non-refundable unless 
+                                    By clicking "Accept & Verify", you authorize the payment of the specified amount
+                                    for the services/products described. This payment is non-refundable unless
                                     otherwise specified in the service agreement.
                                 </p>
                             </div>
@@ -99,8 +99,8 @@ export default function PaymentAcceptanceModal({
                             <div>
                                 <h4 className="font-semibold text-white mb-2">2. Payment Processing</h4>
                                 <p className="text-gray-400">
-                                    Your payment will be processed through a secure payment gateway. All transactions 
-                                    are encrypted and secure. You will be redirected to the payment gateway to complete 
+                                    Your payment will be processed through a secure payment gateway. All transactions
+                                    are encrypted and secure. You will be redirected to the payment gateway to complete
                                     the transaction.
                                 </p>
                             </div>
@@ -108,8 +108,8 @@ export default function PaymentAcceptanceModal({
                             <div>
                                 <h4 className="font-semibold text-white mb-2">3. Transaction Security</h4>
                                 <p className="text-gray-400">
-                                    We use industry-standard SSL encryption to protect your payment information. 
-                                    Your card details are never stored on our servers and are processed directly 
+                                    We use industry-standard SSL encryption to protect your payment information.
+                                    Your card details are never stored on our servers and are processed directly
                                     by our payment partners.
                                 </p>
                             </div>
@@ -117,7 +117,7 @@ export default function PaymentAcceptanceModal({
                             <div>
                                 <h4 className="font-semibold text-white mb-2">4. Service Delivery</h4>
                                 <p className="text-gray-400">
-                                    Upon successful payment, you will receive a confirmation email with transaction 
+                                    Upon successful payment, you will receive a confirmation email with transaction
                                     details and receipt. Services will be delivered as per the agreed timeline.
                                 </p>
                             </div>
@@ -125,8 +125,8 @@ export default function PaymentAcceptanceModal({
                             <div>
                                 <h4 className="font-semibold text-white mb-2">5. Dispute Resolution</h4>
                                 <p className="text-gray-400">
-                                    In case of any payment disputes or issues, please contact our support team 
-                                    within 7 days of the transaction. We will investigate and resolve the matter 
+                                    In case of any payment disputes or issues, please contact our support team
+                                    within 7 days of the transaction. We will investigate and resolve the matter
                                     in accordance with our refund policy.
                                 </p>
                             </div>
@@ -134,8 +134,8 @@ export default function PaymentAcceptanceModal({
                             <div>
                                 <h4 className="font-semibold text-white mb-2">6. Privacy Policy</h4>
                                 <p className="text-gray-400">
-                                    Your personal and payment information will be handled in accordance with our 
-                                    privacy policy. We do not share your information with third parties except as 
+                                    Your personal and payment information will be handled in accordance with our
+                                    privacy policy. We do not share your information with third parties except as
                                     required for payment processing.
                                 </p>
                             </div>
@@ -143,7 +143,7 @@ export default function PaymentAcceptanceModal({
                             <div>
                                 <h4 className="font-semibold text-white mb-2">7. Acknowledgment</h4>
                                 <p className="text-gray-400">
-                                    By proceeding with this payment, you acknowledge that you have read, understood, 
+                                    By proceeding with this payment, you acknowledge that you have read, understood,
                                     and agree to be bound by these terms and conditions.
                                 </p>
                             </div>
@@ -168,7 +168,7 @@ export default function PaymentAcceptanceModal({
                     {/* Important Notice */}
                     <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
                         <p className="text-yellow-400 text-sm">
-                            <strong>Important:</strong> Once you accept and proceed to payment, you will be redirected 
+                            <strong>Important:</strong> Once you accept and proceed to payment, you will be redirected
                             to our secure payment gateway. Please complete the payment process there.
                         </p>
                     </div>
@@ -186,11 +186,10 @@ export default function PaymentAcceptanceModal({
                     <button
                         onClick={handleAccept}
                         disabled={!agreedToTerms || isProcessing}
-                        className={`px-8 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center space-x-2 ${
-                            agreedToTerms && !isProcessing
+                        className={`px-8 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center space-x-2 ${agreedToTerms && !isProcessing
                                 ? 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white shadow-cyan-500/30'
                                 : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                        }`}
+                            }`}
                     >
                         {isProcessing ? (
                             <>

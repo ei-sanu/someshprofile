@@ -90,10 +90,9 @@ export async function getUserPaymentRequests(
 
         if (error) {
             console.error('Error fetching user payment requests:', error);
-            throw error;
+            throw new Error('Failed to fetch payment requests');
         }
 
-        console.log(`✅ Found ${data?.length || 0} payment requests for user`);
         return data as PaymentWithTransaction[];
     } catch (error) {
         console.error('Error fetching user payment requests:', error);

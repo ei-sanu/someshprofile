@@ -1,6 +1,7 @@
 import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react';
+import { motion } from 'framer-motion';
 import { Bell, Settings, Wallet, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import type { Notification } from '../types/payment';
 import { getUserNotifications, markAllNotificationsAsRead, markNotificationAsRead } from '../utils/paymentApi';
@@ -47,7 +48,7 @@ export default function Header() {
     return () => clearInterval(interval);
   }, [user]);
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = useCallback((sectionId: string) => {
     if (window.location.pathname !== '/') {
       navigate('/');
       setTimeout(() => {
@@ -59,12 +60,12 @@ export default function Header() {
       element?.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
-  };
+  }, [navigate]);
 
-  const handleProjectsClick = () => {
+  const handleProjectsClick = useCallback(() => {
     navigate('/projects');
     setIsMenuOpen(false);
-  };
+  }, [navigate]);
 
   const navItems = [
     { label: 'Home', action: () => scrollToSection('home') },
@@ -74,31 +75,31 @@ export default function Header() {
     { label: 'Contact', action: () => scrollToSection('contact') }
   ];
 
-  const handlePaymentClick = () => {
+  const handlePaymentClick = useCallback(() => {
     navigate('/payments');
     setIsMenuOpen(false);
-  };
+  }, [navigate]);
 
-  const handleTransactionsClick = () => {
+  const handleTransactionsClick = useCallback(() => {
     navigate('/transactions');
     setIsMenuOpen(false);
-  };
+  }, [navigate]);
 
-  const handleAdminClick = () => {
+  const handleAdminClick = useCallback(() => {
     navigate('/admin');
     setIsMenuOpen(false);
-  };
+  }, [navigate]);
 
   // Determine redirect URL based on current page
-  const getRedirectUrl = () => {
+  const getRedirectUrl = useCallback(() => {
     return location.pathname === '/projects' ? '/projects' : '/';
-  };
+  }, [location.pathname]);
 
-  const handleNotificationClick = () => {
+  const handleNotificationClick = useCallback(() => {
     setShowNotifications(!showNotifications);
-  };
+  }, [showNotifications]);
 
-  const handleMarkAsRead = async (notificationId: string) => {
+  const handleMarkAsRead = useCallback(async (notificationId: string) => {
     try {
       await markNotificationAsRead(notificationId);
       setNotifications((prev) =>
@@ -108,9 +109,9 @@ export default function Header() {
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
-  };
+  }, []);
 
-  const handleMarkAllAsRead = async () => {
+  const handleMarkAllAsRead = useCallback(async () => {
     if (!currentUserId) return;
     try {
       await markAllNotificationsAsRead(currentUserId);
@@ -119,7 +120,7 @@ export default function Header() {
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
     }
-  };
+  }, [currentUserId]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-transparent backdrop-blur-lg border-b border-white/10">
@@ -137,17 +138,17 @@ export default function Header() {
             <img
               src="/bgrmsanu.png"
               alt="Somesh Ranjan Biswal"
-              className="w-32 h-24 object-cover transform group-hover:scale-110 transition-transform duration-500"
+              className="w-32 h-24 object-cover"
             />
           </Link>
 
           {/* Navigation Items - Center */}
           <div className="hidden md:flex items-center justify-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <button
                 key={item.label}
                 onClick={item.action}
-                className="text-gray-300 hover:text-cyan-400 transition-colors font-medium"
+                className="text-gray-300 hover:text-cyan-400 font-medium"
               >
                 {item.label}
               </button>
@@ -160,12 +161,12 @@ export default function Header() {
               {/* Notification Bell */}
               <button
                 onClick={handleNotificationClick}
-                className="relative p-2 text-gray-300 hover:text-cyan-400 transition-colors"
+                className="relative p-2 text-gray-300 hover:text-cyan-400"
                 aria-label="Notifications"
               >
                 <Bell className="w-5 h-5" />
                 {notificationCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                     {notificationCount > 9 ? '9+' : notificationCount}
                   </span>
                 )}
@@ -173,18 +174,20 @@ export default function Header() {
 
               {/* Admin Panel Button */}
               {isAdmin && (
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleAdminClick}
                   className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all"
                 >
                   Admin Panel
-                </button>
+                </motion.button>
               )}
 
               {/* Make/Verify Payment Button */}
               <button
                 onClick={handlePaymentClick}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all"
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium"
               >
                 <Wallet className="w-4 h-4" />
                 <span>Payments</span>
@@ -200,7 +203,7 @@ export default function Header() {
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal" redirectUrl={getRedirectUrl()}>
-                <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all">
+                <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-medium">
                   Sign In
                 </button>
               </SignInButton>
@@ -238,46 +241,45 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu */}
-        <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-            }`}
-        >
-          <div className="py-4 space-y-2 border-t border-white/10">
-            {navItems.map((item) => (
-              <button
-                key={item.label}
-                onClick={item.action}
-                className="block w-full text-left px-4 py-2 text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-all rounded-lg"
-              >
-                {item.label}
-              </button>
-            ))}
-            <SignedIn>
-              {isAdmin && (
+        {isMenuOpen && (
+          <div className="md:hidden overflow-hidden">
+            <div className="py-4 space-y-2 border-t border-white/10">
+              {navItems.map((item) => (
                 <button
-                  onClick={handleAdminClick}
-                  className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all"
+                  key={item.label}
+                  onClick={item.action}
+                  className="block w-full text-left px-4 py-2 text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-all rounded-lg"
                 >
-                  Admin Panel
+                  {item.label}
                 </button>
-              )}
-              <button
-                onClick={handlePaymentClick}
-                className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all"
-              >
-                <Wallet className="w-4 h-4" />
-                <span>Payments</span>
-              </button>
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal" redirectUrl={getRedirectUrl()}>
-                <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all">
-                  Sign In
+              ))}
+              <SignedIn>
+                {isAdmin && (
+                  <button
+                    onClick={handleAdminClick}
+                    className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all"
+                  >
+                    Admin Panel
+                  </button>
+                )}
+                <button
+                  onClick={handlePaymentClick}
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-emerald-700 transition-all"
+                >
+                  <Wallet className="w-4 h-4" />
+                  <span>Payments</span>
                 </button>
-              </SignInButton>
-            </SignedOut>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal" redirectUrl={getRedirectUrl()}>
+                  <button className="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all">
+                    Sign In
+                  </button>
+                </SignInButton>
+              </SignedOut>
+            </div>
           </div>
-        </div>
+        )}
       </nav>
     </header>
   );
